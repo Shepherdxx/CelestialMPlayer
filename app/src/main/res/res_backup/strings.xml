@@ -1,0 +1,237 @@
+<resources>
+    <!--<string name="app_name" translatable="false">Celestial MPlayer</string>-->
+    <!--<string name="play" translatable="false"><![CDATA[|>]]></string>-->
+    <!--<string name="pause" translatable="false">||</string>-->
+    <!--<string name="next_song" translatable="false"><![CDATA[|>>]]></string>-->
+    <!--<string name="back_song" translatable="false"><![CDATA[<<|]]></string>-->
+    <!--<string name="search">search</string>-->
+    <!--<string name="reset">reset</string>-->
+    <!--<string name="share_song">Share</string>-->
+    <!--<string name="action_settings">Settings</string>-->
+    <!--<string name="http" translatable="false">http</string>-->
+    <!--<string name="time">mm:ss</string>-->
+
+    <!--<string name="item1" translatable="false"><![CDATA[<|>]]></string>-->
+    <!--<string name="item2" translatable="false"><![CDATA[|>]]></string>-->
+    <!--<string name="item3" translatable="false">Item3</string>-->
+    <!--<string name="item4" translatable="false">Item4</string>-->
+
+    <!--&lt;!&ndash;Song Attribute&ndash;&gt;-->
+    <!--<string name="artist_title">Artist</string>-->
+    <!--<string name="album_title">Album</string>-->
+
+    <!--&lt;!&ndash;Main Activity options&ndash;&gt;-->
+    <!--<string name="menu_option_1">Player</string>-->
+    <!--<string name="menu_option_2">Radio</string>-->
+    <!--<string name="menu_option_3" translatable="false">Web</string>-->
+    <!--<string name="menu_option_4" translatable="false">Folders</string>-->
+    <!--<string name="menu_option_5">FileM</string>-->
+    <!--<string name="menu_option_6">VkFiles</string>-->
+    <!--<string name="menu_option_7">Settings</string>-->
+
+    <!--&lt;!&ndash;player_option&ndash;&gt;-->
+    <!--<string name="player_option_1">All Audio</string>-->
+    <!--<string name="player_option_2" translatable="false">PlayList</string>-->
+    <!--<string name="player_option_3">Cashe</string>-->
+    <!--<string name="player_option_4">++new++</string>-->
+
+
+    <!--<string name="appwidget_text" translatable="false">EXAMPLE</string>-->
+    <!--<string name="configure">Configure</string>-->
+    <!--<string name="add_widget" translatable="false">Add widget</string>-->
+
+    <!--&lt;!&ndash; Text hint for editor [CHAR LIMIT=30] &ndash;&gt;-->
+    <!--<string name="hint_file_name">Name</string>-->
+    <!--<string name="song_title">Title</string>-->
+    <!--<string name="category_editor">Change to</string>-->
+    <!--<string name="category_editor_from">Change from</string>-->
+    <!--<string name="category_folder">Change Folder</string>-->
+    <!--<string name="editor_activity_title_edit_file">Edit File</string>-->
+    <!--<string name="editor_folder_cache">Cache</string>-->
+    <!--<string name="editor_folder_music">Music</string>-->
+    <!--<string name="editor_folder_no_changes">No changes</string>-->
+
+    <!--&lt;!&ndash;Settings&ndash;&gt;-->
+    <!--<string name="apps_volume">AppVolume</string>-->
+
+    <!--<string name="player_repeat_mode">Repeat Mode</string>-->
+    <!--<string name="repeat">Repeat Song</string>-->
+    <!--<string name="repeat_all">Repeat All</string>-->
+    <!--<string name="none_repeat">Not repeated</string>-->
+
+    <!--<string name="settings_category_1">For Developers</string>-->
+    <!--<string name="settings_category_2">Player settings</string>-->
+    <!--<string name="settings_category_3" translatable="false">""</string>-->
+
+
+    <!--&lt;!&ndash; Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] &ndash;&gt;-->
+    <!--<string name="action_save">Save</string>-->
+    <!--<string name="editor_activity_delete">Delete</string>-->
+
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for overflow menu option that inserts fake pet data into the app [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="action_insert_dummy_data">Insert Dummy Data</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for overflow menu option that deletes all pet data in the app [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="action_delete_all_entries">Delete All Pets</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Title text for the empty view, which describes the empty dog house image [CHAR LIMIT=50] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="empty_view_title_text">It\'s a bit lonely here...</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="empty_view_subtitle_text">Get started by adding a pet</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Title for the activity to add a new pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_activity_title_new_pet">Add a Pet</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Title for the activity to edit an existing pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_activity_title_edit_pet">Edit Pet</string>&ndash;&gt;-->
+
+
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for editor overflow menu option that deletes the current pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="action_delete">Delete</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when new pet has been successfully inserted [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_insert_pet_successful">Pet saved</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when new pet has failed to be inserted [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_insert_pet_failed">Error with saving pet</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when current pet was successfully updated [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_update_pet_successful">Pet updated</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when current pet has failed to be updated [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_update_pet_failed">Error with updating pet</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog message when user is leaving editor but hasn't saved changes [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog button text for the option to discard a user's changes [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="discard">Discard</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog button text for the option to keep editing the current pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="keep_editing">Keep Editing</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when current pet was successfully deleted [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_delete_pet_successful">Pet deleted</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Toast message in editor when current pet has failed to be deleted [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="editor_delete_pet_failed">Error with deleting pet</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog message to ask the user to confirm deleting the current pet [CHAR LIMIT=NONE] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="delete_dialog_msg">Delete this pet?</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog button text for the option to confirm deleting the current pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="delete">Delete</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Dialog button text for the option to cancel deletion of the current pet [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="cancel">Cancel</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for overview category of attributes in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="category_overview">Overview</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for gender information in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="category_gender">Gender</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for measurement information in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="category_measurement">Measurement</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Text hint for name field in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="hint_pet_name">Name</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Text hint for breed field in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="hint_pet_breed">Breed</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Text hint for name field in the editor [CHAR LIMIT=30] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="hint_pet_weight">Weight</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Units for weight of the pet (kilograms) [CHAR LIMIT=5] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="unit_pet_weight">kg</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for dropdown menu option if the pet's gender is unknown [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="gender_unknown">Unknown</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for dropdown menu option if the pet is male [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="gender_male">Male</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for dropdown menu option if the pet is female [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="gender_female">Female</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Label for the pet's breed if the breed is unknown [CHAR LIMIT=20] &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="unknown_breed">Unknown breed</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="title_activity_settings">Settings</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Strings related to Settings &ndash;&gt;&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Example General settings &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_header_general">General</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_social_recommendations">Enable social recommendations</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_description_social_recommendations">Recommendations for people to contact&ndash;&gt;-->
+        <!--&lt;!&ndash;based on your message history&ndash;&gt;-->
+    <!--&lt;!&ndash;</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_display_name">Display name</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_default_display_name">John Smith</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_add_friends_to_messages">Add friends to messages</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string-array name="pref_example_list_titles">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Always</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>When possible</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Never</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string-array name="pref_example_list_values">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>1</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>0</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>-1</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Example settings for Data & Sync &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_header_data_sync">Data &amp; sync</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_sync_frequency">Sync frequency</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string-array name="pref_sync_frequency_titles">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>15 minutes</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>30 minutes</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>1 hour</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>3 hours</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>6 hours</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Never</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string-array name="pref_sync_frequency_values">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>15</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>30</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>60</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>180</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>360</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>-1</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string-array name="list_preference_entries">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Entry 1</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Entry 2</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>Entry 3</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string-array name="list_preference_entry_values">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>1</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>2</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item>3</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</string-array>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string-array name="multi_select_list_preference_default_value" />&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_system_sync_settings">System sync settings</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Example settings for Notifications &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_header_notifications">Notifications</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_new_message_notifications">New message notifications</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_ringtone">Ringtone</string>&ndash;&gt;-->
+    <!--&lt;!&ndash;<string name="pref_ringtone_silent">Silent</string>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<string name="pref_title_vibrate">Vibrate</string>&ndash;&gt;-->
+
+</resources>

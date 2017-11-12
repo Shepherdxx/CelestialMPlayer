@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2016 The Android Open Source Project
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<!-- Layout for the editor -->
+<LinearLayout>
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--android:padding="@dimen/activity_margin"-->
+    <!--tools:context=".EditorActivity">-->
+
+    <!--&lt;!&ndash; Overview category &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--&lt;!&ndash; Label &ndash;&gt;-->
+        <!--<TextView-->
+            <!--android:text="@string/category_overview"-->
+            <!--style="@style/CategoryStyle" />-->
+
+        <!--&lt;!&ndash; Input fields &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:paddingLeft="4dp"-->
+            <!--android:orientation="vertical">-->
+
+            <!--&lt;!&ndash; Name field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_pet_name"-->
+                <!--android:hint="@string/song_name"-->
+                <!--android:inputType="textCapWords"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+            <!--&lt;!&ndash; Breed field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_pet_breed"-->
+                <!--android:hint="@string/hint_pet_breed"-->
+                <!--android:inputType="textCapWords"-->
+                <!--style="@style/EditorFieldStyle" />-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash; Gender category &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:id="@+id/container_gender"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--&lt;!&ndash; Label &ndash;&gt;-->
+        <!--<TextView-->
+            <!--android:text="@string/category_gender"-->
+            <!--style="@style/CategoryStyle" />-->
+
+        <!--&lt;!&ndash; Input field &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:orientation="vertical">-->
+
+            <!--&lt;!&ndash; Gender drop-down spinner &ndash;&gt;-->
+            <!--<Spinner-->
+                <!--android:id="@+id/spinner_gender"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:paddingRight="16dp"-->
+                <!--android:spinnerMode="dropdown"/>-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash; Measurement category &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:id="@+id/container_measurement"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--&lt;!&ndash; Label &ndash;&gt;-->
+        <!--<TextView-->
+            <!--android:text="@string/category_measurement"-->
+            <!--style="@style/CategoryStyle" />-->
+
+        <!--&lt;!&ndash; Input fields &ndash;&gt;-->
+        <!--<RelativeLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:paddingLeft="4dp">-->
+
+            <!--&lt;!&ndash; Weight field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_pet_weight"-->
+                <!--android:hint="@string/hint_pet_weight"-->
+                <!--android:inputType="number"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+            <!--&lt;!&ndash; Units for weight (kg) &ndash;&gt;-->
+            <!--<TextView-->
+                <!--android:id="@+id/label_weight_units"-->
+                <!--android:text="@string/unit_pet_weight"-->
+                <!--style="@style/EditorUnitsStyle"/>-->
+        <!--</RelativeLayout>-->
+    <!--</LinearLayout>-->
+</LinearLayout>

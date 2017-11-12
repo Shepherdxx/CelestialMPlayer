@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="apps_volume">Громкость</string>
+    <string name="repeat">Повтор песни</string>
+    <string name="action_settings">Настройки</string>
+    <string name="player_repeat_mode">Режим Повтора</string>
+    <string name="category_folder">Сменить папку</string>
+    <string name="menu_option_1">Плейер</string>
+    <string name="menu_option_2">Радио</string>
+    <string name="menu_option_3">Музыка Vk</string>
+    <string name="menu_option_4">Проводник</string>
+    <string name="menu_option_7">Настройки</string>
+    <string name="none_repeat">Не повторять</string>
+    <string name="player_option_1">Все песни</string>
+    <string name="player_option_3">Музыка Vk Offline</string>
+    <string name="player_option_4">++Добавить плейлист++</string>
+    <string name="repeat_all">Повтор плейлиста</string>
+    <string name="reset">сброс</string>
+    <string name="search">поиск</string>
+    <string name="settings_category_1">Пока не придумал</string>
+    <string name="editor_folder_cache">Сохраненные файлы</string>
+    <string name="editor_folder_music">Музыка</string>
+    <string name="category_editor_from">Изменить с</string>
+    <string name="category_editor">На</string>
+    <string name="action_save">Сохранить</string>
+    <string name="artist_title">Исполнитель</string>
+    <string name="album_title">Альбом</string>
+    <string name="editor_folder_no_changes">Туда же</string>
+    <string name="configure">Настроить</string>
+    <string name="editor_activity_title_edit_file">Изменить файл</string>
+    <string name="editor_activity_delete">Удалить</string>
+    <string name="hint_file_name">Имя файла</string>
+    <string name="settings_category_2">Настройки проигрывателя</string>
+    <string name="share_song">Поделится</string>
+    <string name="song_title">Название песни</string>
+    <string name="time">мин:сек</string>
+    <string name="default_name">Вася Пупкин</string>
+    <string name="your_name">Ваше Имя</string>
+    <string name="cache_folder_name">Папка для сохранения</string>
+    <string name="no_data">Песен нет</string>
+    <string name="logs">Логи приложения</string>
+    <string name="settings_category_3">Для разработчиков</string>
+    <string name="control_panel">Кнопки управления</string>
+    <string name="control_panel_default">Стандарт</string>
+    <string name="control_panel_retro">Ретро</string>
+    <string name="editor_activity_edit">Редактировать</string>
+    <string name="FILE_L_M_ASC">по времени <![CDATA[>]]> </string>
+    <string name="FILE_L_M__DES">по времени <![CDATA[<]]> </string>
+    <string name="FILE_NAME_ASC">по имени <![CDATA[>]]></string>
+    <string name="FILE_NAME_DES">по имени <![CDATA[<]]> </string>
+    <string name="FILE_SIZE_ASC">по размеру <![CDATA[>]]></string>
+    <string name="FILE_SIZE_DES">по размеру <![CDATA[<]]></string>
+    <string name="action_cancel">Отмена</string>
+
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fr_control_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:visibility="visible"
+    android:background="@drawable/border">
+
+
+    <GridLayout
+        android:id="@+id/fr_control_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:columnCount="7"
+        android:orientation="horizontal"
+        android:rowCount="1">
+
+
+
+        <ImageButton
+            android:id="@+id/fr_back_song"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="-5dp"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:src="@drawable/ic_skip_previous_black_48dp" />
+
+        <ImageButton
+            android:id="@+id/fr_toward"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="-5dp"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:src="@drawable/ic_replay_5_black_48dp" />
+
+        <ImageButton
+            android:id="@+id/fr_pausePlay"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="-5dp"
+            android:src="@drawable/ic_play_circle_outline_black_48dp" />
+
+
+        <ImageButton
+            android:id="@+id/fr_forward"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:background="@null"
+            android:padding="-5dp"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:src="@drawable/ic_forward_5_black_48dp" />
+
+        <ImageButton
+            android:id="@+id/fr_next_song"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="-5dp"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:src="@drawable/ic_skip_next_black_48dp" />
+
+
+
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/radio_title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/border_row"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_margin="2dp"/>
+
+    <LinearLayout
+        android:id="@+id/fr_time_text"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        >
+
+        <TextView
+            android:id="@+id/fr_st_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="xx:xx"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        <SeekBar
+            android:id="@+id/fr_sb_seekBar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/fr_tl_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="zz:zz"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+</LinearLayout>

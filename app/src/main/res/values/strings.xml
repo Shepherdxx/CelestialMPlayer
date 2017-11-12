@@ -1,0 +1,210 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="welcome">Welcome to my program!</string>
+    <string name="title_activity_b__main_screen">B_MainScreen</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <!--labels-->
+    <string name="app_name" translatable="false">Celestial MPlayer</string>
+    <string name="action_settings">Settings</string>
+    <string name="B_Activity">B_Activity</string>
+
+    <string name="play" translatable="false"><![CDATA[|>]]></string>
+    <string name="pause" translatable="false">||</string>
+    <string name="next_song" translatable="false"><![CDATA[|>>]]></string>
+    <string name="back_song" translatable="false"><![CDATA[<<|]]></string>
+    <string name="search">search</string>
+    <string name="reset">reset</string>
+    <string name="share_song">Share</string>
+
+    <string name="http" translatable="false">http</string>
+    <string name="time">mm:ss</string>
+
+    <string name="item1" translatable="false"><![CDATA[<|>]]></string>
+    <string name="item2" translatable="false"><![CDATA[|>]]></string>
+    <string name="item3" translatable="false">Item3</string>
+    <string name="item4" translatable="false">Item4</string>
+
+
+    <string name="agit">Программа находится в стадии разработки, "
+"Разработчик открыт для предложений</string>
+
+    <!--Song Attribute-->
+    <string name="artist_title">Artist</string>
+    <string name="album_title">Album</string>
+
+    <!--Main Activity options-->
+    <string name="menu_option_1">Player</string>
+    <string name="menu_option_2">Radio</string>
+    <string name="menu_option_3">VkFiles</string>
+    <string name="menu_option_4">FileM</string>
+    <string name="menu_option_5" translatable="false">Web</string>
+    <string name="menu_option_6" translatable="false">Folders</string>
+    <string name="menu_option_7">Settings</string>
+    <string name="menu_option_8">Volume</string>
+
+    <!--player_option-->
+    <string name="player_option_1">All Audio</string>
+    <string name="player_option_2" translatable="false">PlayList</string>
+    <string name="player_option_3">Cashe</string>
+    <string name="player_option_4">++new++</string>
+
+
+    <string name="appwidget_text" translatable="false">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget" translatable="false">Add widget</string>
+
+    <!-- Text hint for editor [CHAR LIMIT=30] -->
+    <string name="hint_file_name">Name</string>
+    <string name="song_title">Title</string>
+    <string name="category_editor">Change to</string>
+    <string name="category_editor_from">Change from</string>
+    <string name="category_folder">Change Folder</string>
+    <string name="editor_activity_title_edit_file">Edit File</string>
+    <string name="editor_folder_cache">Cache</string>
+    <string name="editor_folder_music">Music</string>
+    <string name="editor_folder_no_changes">No changes</string>
+
+    <!--Settings-->
+    <string name="settings_category_1">Unknown</string>
+    <string name="your_name">Your Name</string>
+    <string name="default_name">Mr.Smith</string>
+
+    <string name="settings_category_2">Player Settings</string>
+    <string name="player_repeat_mode">Repeat Mode</string>
+    <string name="repeat">Repeat Song</string>
+    <string name="repeat_all">Repeat All</string>
+    <string name="none_repeat">Not Repeated</string>
+    <string name="control_panel">Control Panel</string>
+    <string name="control_panel_retro">Retro</string>
+    <string name="control_panel_default">Standard</string>
+
+    <string name="settings_category_3">For Developers</string>
+    <string name="apps_volume">App Volume</string>
+    <string name="logs">Logs</string>
+
+    <!--Settings Key-->
+    <string name="key_player_repeat_mode" translatable="false">@string/player_repeat_mode</string>
+    <string name="key_your_name" translatable="false">@string/your_name</string>
+    <string name="key_apps_volume" translatable="false">@string/apps_volume</string>
+    <string name="key_logs" translatable="false">@string/logs</string>
+    <string name="key_cache_folder_name" translatable="false">@string/default_cache_folder_name</string>
+    <string name="key_control_panel" translatable="false">@string/control_panel</string>
+
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+
+    <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="editor_activity_delete">Delete</string>
+    <string name="editor_activity_edit">Edit</string>
+    <string name="cache_folder_name">Folder for saved song</string>
+    <string name="default_cache_folder_name" translatable="false">MyCache</string>
+    <string name="no_data">No data</string>
+
+    <!--Label for dialog-->
+    <string name="retry">Playlist must have a name. Please try again></string>
+    <string name="retry_but">Retry</string>
+    <string name="example">My new playlist</string>
+    <string name="create">create</string>
+    <string name="cancel">cancel</string>
+
+
+    <string name="fragment_tag">playlist</string>
+    <!--Song Attribute-->
+    <string name="krasView">KrasView</string>
+    <string name="title_activity_bg">bg</string>
+    <!--<string name="retry">Playlist must have a name. Please try again></string>-->
+    <!--<string name="retry">Playlist must have a name. Please try again></string>-->
+    <!--<string name="retry">Playlist must have a name. Please try again></string>-->
+    <!--Main Activity options-->
+
+    <!--player_option-->
+
+
+    <!-- Text hint for editor [CHAR LIMIT=30] -->
+
+    <!--Settings-->
+
+
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+    <!--<string name="key_apps_volume" translatable="false">@string/apps_volume</string>-->
+
+    <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
+
+    <!--Label for PlayList issue-->
+    <string name="playlist_favorites">Favorites</string>
+    <string name="media_stats_progress">media_stats_progress</string>
+    <string name="media_library_scan_running">media_library_scan_running</string>
+
+
+    <string name="start_fragment">Choose our destiny</string>
+    <string name="new_playlist">new Playlist</string>
+</resources>

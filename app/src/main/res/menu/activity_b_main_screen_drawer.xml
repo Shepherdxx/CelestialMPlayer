@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/player_activity"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_option_1" />
+        <item
+            android:id="@+id/radio_activity"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/menu_option_2" />
+        <item
+            android:id="@+id/vk_activity"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/menu_option_3" />
+        <item
+            android:id="@+id/kras_view_activity"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/krasView" />
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_option_7" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+            <item
+                android:id="@+id/web_search"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Search" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="foreground_dark_disabled">#50ffffff</color>
+
+    <!--Material colors-->
+    <!--In between colors were created with this tool:-->
+    <!-- http://meyerweb.com/eric/tools/color-blend/#339999::1:hex -->
+
+    <!-- Primary color for the editor -->
+
+    <!-- Primary dark color for the editor -->
+
+
+</resources>
