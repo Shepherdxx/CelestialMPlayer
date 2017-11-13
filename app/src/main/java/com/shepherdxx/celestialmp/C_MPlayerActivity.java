@@ -3,6 +3,7 @@ package com.shepherdxx.celestialmp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 
@@ -14,7 +15,7 @@ import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 
 public class C_MPlayerActivity  extends AppCompatActivity
 //        implements
-//        AdapterMS.OnViewClicklListener
+//        AdapterMS.OnViewClickListener
 //        ,AdapterMS.OnChangeClicklListener
 //        ,View.OnClickListener
 //        ,ControlPanelButtonListener
@@ -70,7 +71,12 @@ public class C_MPlayerActivity  extends AppCompatActivity
 //    PPL playlist;
 ////    private ControlsPanelReciever mReceiver;
 //
-
+PreferenceManager.OnActivityResultListener listener = new PreferenceManager.OnActivityResultListener() {
+    @Override
+    public boolean onActivityResult(int i, int i1, Intent intent) {
+        return false;
+    }
+};
     //соответствия с View
     void findView() {
 //        tb = (Toolbar) findViewById(R.id.tb);
@@ -118,7 +124,7 @@ public class C_MPlayerActivity  extends AppCompatActivity
 //        RW.addItemDecoration(DID);
 //        RW.setAdapter(mAdapterMS);
 //        RW.setLayoutManager(mLLManager);
-//        mAdapterMS.setmOnViewClicklListener(this);
+//        mAdapterMS.setListener(this);
 //        mAdapterMS.setmOnChangeClicklListener(this);
 //    }
 //

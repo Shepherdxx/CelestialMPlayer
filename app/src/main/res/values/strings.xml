@@ -97,21 +97,23 @@
     <string name="artist_title">Artist</string>
     <string name="album_title">Album</string>
 
-    <!--Main Activity options-->
-    <string name="menu_option_1">Player</string>
-    <string name="menu_option_2">Radio</string>
-    <string name="menu_option_3">VkFiles</string>
-    <string name="menu_option_4">FileM</string>
-    <string name="menu_option_5" translatable="false">Web</string>
-    <string name="menu_option_6" translatable="false">Folders</string>
-    <string name="menu_option_7">Settings</string>
-    <string name="menu_option_8">Volume</string>
+    <!--B_Main Activity options-->
+    <string name="menu_option_1">Playlist</string>
+    <string name="menu_option_2">Player</string>
+    <string name="menu_option_3">Radio</string>
+    <string name="menu_option_4">VkFiles</string>
+    <string name="menu_option_5">KrasView</string>
+    <string name="menu_option_6">Settings</string>
+
+    <string name="menu_option_14">FileM</string>
+    <string name="menu_option_15" translatable="false">Web</string>
+    <string name="menu_option_16" translatable="false">Folders</string>
+    <string name="menu_option_18">Volume</string>
+
 
     <!--player_option-->
     <string name="player_option_1">All Audio</string>
-    <string name="player_option_2" translatable="false">PlayList</string>
-    <string name="player_option_3">Cashe</string>
-    <string name="player_option_4">++new++</string>
+    <string name="player_option_2">Cashe</string>
 
 
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
@@ -178,7 +180,7 @@
 
     <string name="fragment_tag">playlist</string>
     <!--Song Attribute-->
-    <string name="krasView">KrasView</string>
+
     <string name="title_activity_bg">bg</string>
     <!--<string name="retry">Playlist must have a name. Please try again></string>-->
     <!--<string name="retry">Playlist must have a name. Please try again></string>-->

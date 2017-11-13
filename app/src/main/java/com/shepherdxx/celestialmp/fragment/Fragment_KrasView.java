@@ -51,11 +51,16 @@ public class Fragment_KrasView
 
     private WebView kras_viewer = null;
     private static String Log_Tag= Fragment_KrasView.class.getSimpleName();
-    LinearLayout panelLayout;
+    public LinearLayout panelLayout;
     View fragmentView;
     ImageButton imageButton;
     String path;
     boolean panelVisibility = false;
+
+    public boolean getPanelVisibility(){
+        if (panelLayout.getVisibility()==View.VISIBLE) return true;
+        else  return false;
+    }
 
     public void setPanelVisibility(boolean panelVisibility) {
         this.panelVisibility = panelVisibility;

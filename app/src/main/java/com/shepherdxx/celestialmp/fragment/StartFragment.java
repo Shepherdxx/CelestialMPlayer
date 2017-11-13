@@ -15,7 +15,7 @@ import android.widget.ListView;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter;
-import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClicklListener;
+import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClickListener;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class StartFragment
         extends Fragment
-        implements OnViewClicklListener
+        implements OnViewClickListener
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -165,8 +165,8 @@ public class StartFragment
 
     public void setMyAdapter(final ArrayList<PlayListInfo> pLI) {
 
-        myPlayListAdapter = new MyPlayListAdapter(context,pLI,this);
-
+        myPlayListAdapter = new MyPlayListAdapter(context,pLI);
+        myPlayListAdapter.setListener(this);
         plScroll.setAdapter(myPlayListAdapter);
 
     }

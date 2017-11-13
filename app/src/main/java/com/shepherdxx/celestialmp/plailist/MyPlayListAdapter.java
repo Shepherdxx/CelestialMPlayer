@@ -3,63 +3,53 @@ package com.shepherdxx.celestialmp.plailist;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.shepherdxx.celestialmp.R;
+import com.shepherdxx.celestialmp.extras.ExpView;
+import com.shepherdxx.celestialmp.extras.PopUpToast;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Shepherdxx on 09.11.2017.
  */
 
 public class MyPlayListAdapter extends
-        ArrayAdapter<String> {
+        ArrayAdapter<PlayListInfo>
+{
 
-    public MyPlayListAdapter(@NonNull Context context, @NonNull ArrayList<PlayListInfo> playListInfoArray,OnViewClicklListener listener ) {
-        this (context,playListInfoArray);
-        setmOnViewClicklListener(listener);
+    private OnViewClickListener mListener;
+
+    public void setListener(OnViewClickListener mListener) {
+        this.mListener = mListener;
     }
 
-    public MyPlayListAdapter(@NonNull Context context, @NonNull ArrayList<PlayListInfo> playListInfoArray ) {
-        this (context, R.layout.adapter_view,R.id.song_name);
-        addAll(pl_scroll(playListInfoArray));
-    }
-
-    public MyPlayListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
-        super(context, resource, textViewResourceId);
-        this.context=context;
-    }
-
-    Context context;
-    private ArrayList<PlayListInfo> scroll;
-    private ArrayList<String> pl_scroll(ArrayList<PlayListInfo> playListInfoArray){
-        scroll=playListInfoArray;
-        ArrayList<String> pl_names=new ArrayList<>();
-        for (int i=0; i<playListInfoArray.size();i++){
-            pl_names.add(playListInfoArray.get(i).getName());
-        }
-        return pl_names;
-    };
-
-    public OnViewClicklListener getmOnViewClicklListener() {
-        return mOnViewClicklListener;
-    }
-
-    public void setmOnViewClicklListener(OnViewClicklListener mOnViewClicklListener) {
-        this.mOnViewClicklListener = mOnViewClicklListener;
-    }
-
-    OnViewClicklListener mOnViewClicklListener;
-
-
-    public interface OnViewClicklListener{
+    public interface OnViewClickListener {
         void onItemClick(View v, PlayListInfo obj, int position);
     }
 
+    public MyPlayListAdapter(@NonNull Context context, @NonNull List<PlayListInfo> objects) {
+        super(context, 0, objects);
+    }
 
     @Override
-    public void addAll(String... items) {
-        super.addAll(items);
+    public View getView(final int position,final View convertView, final ViewGroup parent) {
+        ExpView itemView = (ExpView)convertView;
+        if (null == itemView)
+            itemView = ExpView.inflate(parent);
+        itemView.setItem(getItem(position));
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (null != mListener) {
+                    mListener.onItemClick(convertView,getItem(position),position);
+                }else {
+                   new PopUpToast(parent.getContext()).setMessage("Забыл");
+                }
+            }
+        });
+        return itemView;
     }
+
 }

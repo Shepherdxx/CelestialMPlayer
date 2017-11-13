@@ -17,7 +17,7 @@ public class QueryTask {
     public String sortOrder;
 
     /**
-     * Used for {@link SongTimeline#addSongs(android.content.Context, QueryTask)}.
+     * Used for {@lin k SongTimeline#addSongs(android.content.Context, QueryTask)}.
      * One of SongTimeline.MODE_*.
      */
     public int mode;

@@ -35,26 +35,56 @@ import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
 import com.shepherdxx.celestialmp.plailist.RadioBD;
 import com.shepherdxx.celestialmp.settings.SettingsActivity;
 
+import java.util.ArrayList;
+
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
 
 public class B_MainScreen extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener
-    ,ControlPanelButtonListener
-    ,Fragment_Playlist.OnListFragmentInteractionListener
-    ,Fragment_VK.OnVKListFragmentInteractionListener
-    ,OnFragmentInteractionListener
+        , ControlPanelButtonListener
+        , Fragment_Playlist.OnListFragmentInteractionListener
+        , Fragment_VK.OnVKListFragmentInteractionListener
+        , OnFragmentInteractionListener
 
 {
+    String Log_tag = B_MainScreen.class.getSimpleName();
+
     FragmentManager fragmentManager = getSupportFragmentManager();
     RadioBD radioBD;
     Toolbar toolbar;
-    String  AlbumName,ArtistName,SongName;
+    String AlbumName, ArtistName, SongName;
+
+    /**
+     * Сохраняемые Переменные
+     */
+    String onKrasVPath;
     boolean onStart;
     boolean onKrasV;
-    String onKrasVPath;
-    String Log_tag = B_MainScreen.class.getSimpleName();
+    int checkedFragmentId;
+
+    /**
+     * (@Link dummyId) заменить на Id из настроек приложения
+     */
+    int dummyId = R.id.player_playlist;
+
+    NavigationView navView;
+    ArrayList<Integer> fragmentId = new ArrayList<>();
+
+    /**
+     * Установка навигционного поля
+     */
+    private void setDrawerLayout() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        navView = navigationView;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,136 +93,72 @@ public class B_MainScreen extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             onStart = savedInstanceState.getBoolean(onStartStr);
             onKrasV = savedInstanceState.getBoolean(onKrasView);
             onKrasVPath = savedInstanceState.getString(onKrasL);
+            checkedFragmentId = savedInstanceState.getInt(cFrId);
+            fragmentId = savedInstanceState.getIntegerArrayList(frIdAr);
+//            checkedFragmentId= fragmentId != null ? fragmentId[fragmentId.length - 1] : dummyId;
+        } else onStart = true;
+
+        setDrawerLayout();
+        checkedFragment(FragmentId());
+        navViewCheckedItem();
+    }
+
+    private int FragmentId() {
+        if (onStart) {
+            onStart = false;
+            return dummyId;
         }
-        else onStart=true;
-        if (onStart){
-            onStart=false;
-            Fragment exchangeFragment= StartFragment.newInstance();
-            replacer(exchangeFragment);
-        }
-
+        return checkedFragmentId;
     }
 
-    @Override
-    public android.support.v4.app.LoaderManager getSupportLoaderManager() {
-        return super.getSupportLoaderManager();
-    }
-    // Отправка сообщения с названием песни
-    private Intent SendIntent(String ShareMessage) {
-//        if (AlbumName != null && ArtistName != null) {
-//            ShareMessage = AlbumName + " " + ArtistName + " " + SongName;
-//        } else ShareMessage = SongName;
-        Intent shareIntent = ShareCompat.IntentBuilder.from(this)
-                .setType("text/plain")
-                .setText(ShareMessage)
-                .getIntent();
-        return shareIntent;
-    }
-    //Закрытие панели меню DrawerLayout
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (exchangeFragment instanceof Fragment_KrasView) {
-                WebView kras_viewer = ((Fragment_KrasView) exchangeFragment).getKras_viewer();
-                if (kras_viewer.canGoBack()) {
-                    kras_viewer.goBack();
-                }
-
-            }
-            else {
-                super.onBackPressed();
-            }
-        }
+    void navViewCheckedItem() {
+        navView.setCheckedItem(FragmentId());
+        Log.i(Log_tag, "navViewCheckedItem " + String.valueOf(FragmentId()));
     }
 
-    //Меню в правом верхнем углу
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.b__main_screen, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == R.id.search_button) {
-            if (exchangeFragment instanceof Fragment_KrasView) {
-                ((Fragment_KrasView) exchangeFragment).setPanelVisibility(true);
-            }
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    Fragment exchangeFragment;
-    //Панель выбора меню DrawerLayout
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-//        Fragment exchangeFragment=Fragment_Playlist.newInstance(2);
+    void checkedFragment(int id) {
         Intent intent;
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        switch (id){
+        checkedFragmentId = id;
+        switch (id) {
+            case R.id.player_playlist:
+                Fragment exchangeFragment = StartFragment.newInstance();
+                replacer(exchangeFragment);
+                break;
             case R.id.kras_view_activity:
                 if (!onKrasV)
-                    exchangeFragment= Fragment_KrasView.newInstance("http://kadu.ru/");
-                else exchangeFragment= Fragment_KrasView.newInstance(onKrasVPath);
-                    replacer(exchangeFragment);
+                    exchangeFragment = Fragment_KrasView.newInstance("http://kadu.ru/");
+                else exchangeFragment = Fragment_KrasView.newInstance(onKrasVPath);
+                replacer(exchangeFragment);
                 break;
             case R.id.player_activity:
-                if (mPlayer!=null)
-                    exchangeFragment=Fragment_Playlist.newInstance(1, Constants.MP_SD_U);
-                else exchangeFragment=Fragment_Playlist.newInstance(2);
+                if (mPlayer != null)
+                    exchangeFragment = Fragment_Playlist.newInstance(1, Constants.MP_SD_U);
+                else exchangeFragment = Fragment_Playlist.newInstance(2);
                 replacer(exchangeFragment);
                 break;
             case R.id.radio_activity:
-
-//                startService(radioBD.RadioIntent());
-                exchangeFragment=Fragment_Playlist.newInstance(1, Constants.MP_RADIO);
+                exchangeFragment = Fragment_Playlist.newInstance(1, Constants.MP_RADIO);
                 replacer(exchangeFragment);
                 break;
             case R.id.vk_activity:
-                exchangeFragment= Fragment_VK.newInstance(1);
+                exchangeFragment = Fragment_VK.newInstance(1);
                 replacer(exchangeFragment);
                 break;
             case R.id.settings:
                 // create intent to perform web search for this planet
 
-                intent=new Intent(this, SettingsActivity.class);
+                intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_share:
                 String message;
                 if (currentTrack().equals(""))
-                    message="Failed";
-                else message= currentTrack();
+                    message = "Failed";
+                else message = currentTrack();
                 startActivity(SendIntent(message));
                 break;
             case R.id.nav_send:
@@ -209,28 +175,114 @@ public class B_MainScreen extends AppCompatActivity
                     Toast.makeText(this, R.string.cancel, Toast.LENGTH_LONG).show();
                 }
                 startActivity(intent);
-                return true;
+                break;
         }
+    }
+
+    @Override
+    public android.support.v4.app.LoaderManager getSupportLoaderManager() {
+        return super.getSupportLoaderManager();
+    }
+
+    // Отправка сообщения с названием песни
+    private Intent SendIntent(String ShareMessage) {
+//        if (AlbumName != null && ArtistName != null) {
+//            ShareMessage = AlbumName + " " + ArtistName + " " + SongName;
+//        } else ShareMessage = SongName;
+        Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+                .setType("text/plain")
+                .setText(ShareMessage)
+                .getIntent();
+        return shareIntent;
+    }
+
+    //Закрытие панели меню DrawerLayout
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (exchangeFragment instanceof Fragment_KrasView) {
+                WebView kras_viewer = ((Fragment_KrasView) exchangeFragment).getKras_viewer();
+                if (kras_viewer.canGoBack()) {
+                    kras_viewer.goBack();
+                } else super.onBackPressed();
+            } else super.onBackPressed();
+            if (fragmentId != null && fragmentId.size() - 2 > 0) {
+                checkedFragmentId = fragmentId.get(fragmentId.size() - 2);
+                fragmentId.remove(fragmentId.size() - 1);
+            } else checkedFragmentId = dummyId;
+            navViewCheckedItem();
+        }
+    }
+
+    //Меню в правом верхнем углу
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.b__main_screen, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.search_button) {
+            if (exchangeFragment instanceof Fragment_KrasView) {
+                boolean b = ((Fragment_KrasView) exchangeFragment).getPanelVisibility();
+                ((Fragment_KrasView) exchangeFragment).setPanelVisibility(!b);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    Fragment exchangeFragment;
+
+    //Панель выбора меню DrawerLayout
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        checkedFragment(id);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     //Смена фрагментов
-    void replacer(Fragment exchangeFragment){
+    void replacer(Fragment exchangeFragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, exchangeFragment);
         //Добавление в стак отмены
-        fragmentTransaction.addToBackStack(null);
+        if (fragmentId.size() != 0)
+            fragmentTransaction.addToBackStack(null);
+        fragmentId.add(checkedFragmentId);
+        Log.i(Log_tag, fragmentId.toString());
         // Commit the transaction
         fragmentTransaction.commit();
+
     }
 
 
-    private String currentTrack(){
-        if (mPlayer!=null){
-            AlbumName=(mPlayer.getAlbumName()==null)? "": mPlayer.getAlbumName();
-            ArtistName=(mPlayer.getArtistName()==null)? "": mPlayer.getArtistName();
-            SongName=(mPlayer.getSongName()==null)? "": mPlayer.getSongName();}
+    private String currentTrack() {
+        if (mPlayer != null) {
+            AlbumName = (mPlayer.getAlbumName() == null) ? "" : mPlayer.getAlbumName();
+            ArtistName = (mPlayer.getArtistName() == null) ? "" : mPlayer.getArtistName();
+            SongName = (mPlayer.getSongName() == null) ? "" : mPlayer.getSongName();
+        }
         if (AlbumName.equals("") || ArtistName.equals("") || SongName.equals("")) {
             return (SongName + " " + AlbumName + " " + ArtistName);
         } else return "";
@@ -252,10 +304,10 @@ public class B_MainScreen extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(PlayerTrackInfo item,int position) {
-        if (checkConnection()){
+    public void onListFragmentInteraction(PlayerTrackInfo item, int position) {
+        if (checkConnection()) {
             toolbar.setTitle(item.getmRadio());
-            radioBD=new RadioBD(this);
+            radioBD = new RadioBD(this);
             startService(radioBD.RadioIntent(position));
         }
     }
@@ -271,7 +323,7 @@ public class B_MainScreen extends AppCompatActivity
     }
 
     private Boolean checkConnection() {
-        boolean isConnected =false;
+        boolean isConnected = false;
         ConnectivityManager cm = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         try {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -285,16 +337,21 @@ public class B_MainScreen extends AppCompatActivity
 
     String onStartStr = "onStart";
     String onKrasView = "krasChanel";
-    String onKrasL    = "lastView";
+    String onKrasL = "lastView";
+    String cFrId = "CheckedFragmentId";
+    String frIdAr = "fragmentIdArray";
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(onStartStr,onStart);
+        outState.putBoolean(onStartStr, onStart);
+        outState.putInt(cFrId, checkedFragmentId);
+        outState.putIntegerArrayList(frIdAr, fragmentId);
         if (exchangeFragment instanceof Fragment_KrasView) {
-            outState.putBoolean(onKrasView,true);
-            outState.putString(onKrasL,((Fragment_KrasView) exchangeFragment).getPath());
-            Log.i(Log_tag, ((Fragment_KrasView) exchangeFragment).getPath()+ " " + onKrasView);
-        } else outState.putBoolean(onKrasView,false);
+            outState.putBoolean(onKrasView, true);
+            outState.putString(onKrasL, ((Fragment_KrasView) exchangeFragment).getPath());
+            Log.i(Log_tag, ((Fragment_KrasView) exchangeFragment).getPath() + " " + onKrasView);
+        } else outState.putBoolean(onKrasView, false);
     }
 
     @Override

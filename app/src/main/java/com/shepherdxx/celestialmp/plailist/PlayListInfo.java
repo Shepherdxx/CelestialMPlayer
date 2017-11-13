@@ -24,25 +24,16 @@ public class PlayListInfo {
      */
     public ArrayList<Long> audioIds;
 
-
     public PlayListInfo(long playlistId, String name) {
         this.playlistId = playlistId;
         this.name = name;
     }
 
-    public long getPlaylistId() {
-        return playlistId;
-    }
+    public long getPlaylistId()         {return playlistId;}
 
-    public String getName() {
-        return name;
-    }
+    public String getName()             {return name;}
 
-    public static PlayListInfo All(){
-        return  new PlayListInfo(-1,"All Audio");
-    }
+    public static PlayListInfo All()    {return  new PlayListInfo(-1, "All Audio");}
 
-    public static PlayListInfo Cache(){
-        return  new PlayListInfo(-2,"Cache");
-    }
+    public static PlayListInfo Cache()  {return  new PlayListInfo(-2,"Cache");}
 }

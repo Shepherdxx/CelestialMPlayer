@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.shepherdxx.celestialmp.R;
@@ -16,13 +16,14 @@ import com.shepherdxx.celestialmp.plailist.PlayListInfo;
  * Created by Shepherdxx on 08.11.2017.
  */
 
-public class ExpView extends LinearLayout {
+public class ExpView extends RelativeLayout {
+
     public ExpView(Context context) {
-        super(context);
+        this(context,null);
     }
 
     public ExpView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public ExpView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
