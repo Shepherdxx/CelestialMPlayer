@@ -406,7 +406,7 @@ public class ControlButtonsExtras implements
     }
 
     private Intent CPIntent(int state){
-        Intent i= new Intent(activity,MP_BackgroundService.class);;
+        Intent i= new Intent(activity,MP_BackgroundService.class);
         Bundle Bondiana = new Bundle();
         Bondiana.putInt("MPType", 0);
         Bondiana.putInt("MPState",state);

@@ -2,7 +2,9 @@ package com.shepherdxx.celestialmp;
 
 import android.app.Activity;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -56,6 +58,11 @@ public class MP_BackgroundService
     ,OnPreparedListener
 {
 
+    public static final String ACTION_PLAY = "com.shepherdxx.celestialmp.action.PLAY";
+    public static final String ACTION_PAUSE = "com.shepherdxx.celestialmp.action.PAUSE";
+    public static final String ACTION_TOGGLE_PLAYBACK = "com.shepherdxx.celestialmp.action.TOGGLE_PLAYBACK";
+    public static final String ACTION_NEXT_SONG = "com.shepherdxx.celestialmp.action.NEXT_SONG";
+    public static final String ACTION_PREVIOUS_SONG = "com.shepherdxx.celestialmp.action.PREVIOUS_SONG";
     String MP_LOG_TAG = "BackgroundService";
     public static MP_MediaPlayer mPlayer;
     int MPType, MPState;
@@ -198,6 +205,14 @@ public class MP_BackgroundService
         //остановка музыки когда выпал наушник
         setBroadcastReceiver();
         registerCallback();
+
+
+        initWidgets();
+        sInstance = this;
+        synchronized (sWait) {
+            sWait.notifyAll();}
+
+
     }
 
     private void reqAudioFocus(){
@@ -442,6 +457,8 @@ public class MP_BackgroundService
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }else {if(ResumeState){getMPData(mCurCheckPosition);
             Create(MPType,MPData, null);mPlayer.seekTo((int)startTimeBefore);onAir();}}
+
+        updateWidgets();
     }
 
     //Сброс проигрывателя
@@ -552,6 +569,64 @@ public class MP_BackgroundService
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         onAir();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Object used for PlaybackService startup waiting.
+     */
+    private static final Object[] sWait = new Object[0];
+    /**
+     * The appplication-wide instance of the PlaybackService.
+     */
+    public static MP_BackgroundService sInstance;
+    public static boolean hasInstance() {
+        return sInstance != null;
+    }
+
+    private void initWidgets()
+    {
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        SmallWidget.checkEnabled(this, manager);
+
+    }
+
+    private void updateWidgets()
+    {
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+//        Song song = mCurrentSong;
+
+        int state = MPState;
+        SmallWidget.updateAppWidget(this, manager, SongTitle[mCurCheckPosition], state);
+    }
+
+    public static MP_BackgroundService get(Context context) {
+
+        if (sInstance == null) {
+            context.startService(new Intent(context, MP_BackgroundService.class));
+
+            while (sInstance == null) {
+                try {
+                    synchronized (sWait) {
+                        sWait.wait();
+                    }
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+
+        return sInstance;
     }
 
 

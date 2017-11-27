@@ -3,6 +3,8 @@ package com.shepherdxx.celestialmp;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
+
 /**
  * Created by Shepherdxx on 16.07.2017.
  */
@@ -70,5 +72,18 @@ public class MP_MediaPlayer
         this.MP_Type = MP_Type;
     }
 
+
+    public int getState() {
+        int state=0;
+        if (mPlayer.isPlaying())state=1;
+        return state;
+    }
+
+    boolean isOnAir(){
+        if (mPlayer!=null){
+            if (mPlayer.isPlaying()) return true;
+        else return false;}
+        return false;
+    };
 
 }
