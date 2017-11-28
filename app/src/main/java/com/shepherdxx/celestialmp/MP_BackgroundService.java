@@ -168,9 +168,7 @@ public class MP_BackgroundService
                            makeText(context, "Ухи подобраны!", Toast.LENGTH_LONG).show();
                            if(ResumeState)onAir();}
                        break;
-
                }
-
            }
        };
        //on Play

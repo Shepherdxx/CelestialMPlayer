@@ -16,10 +16,6 @@ public class PlayListInfo {
      */
     public String name;
     /**
-     * Populate playlist using this QueryTask
-     */
-//    public QueryTask query;
-    /**
      * Populate playlist using this audioIds
      */
     public ArrayList<Long> audioIds;
@@ -28,6 +24,8 @@ public class PlayListInfo {
         this.playlistId = playlistId;
         this.name = name;
     }
+
+    public ArrayList<PlayerTrackInfo> audioTracks;
 
     public long getPlaylistId()         {return playlistId;}
 
