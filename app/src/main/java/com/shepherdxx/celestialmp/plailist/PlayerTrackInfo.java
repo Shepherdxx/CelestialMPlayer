@@ -38,14 +38,14 @@ public class PlayerTrackInfo {
         this.vk_Id=vk_Id;
    }
 
-    public PlayerTrackInfo (String mRadio, String mDescription,Uri mUri){
+    public PlayerTrackInfo (String mRadio, String mDescription,String mUri){
         this.mRadio = mRadio;
         this.mUri = mUri;
         this.mDescription=mDescription;
     }
     String mRadio;
     String mDescription;
-    Uri mUri;
+    String mUri;
 
     public String getmRadio() {
         return mRadio;
@@ -55,7 +55,7 @@ public class PlayerTrackInfo {
         return mDescription;
     }
 
-    public Uri getmUri() {
+    public String getmUri() {
         return mUri;
     }
 
@@ -67,7 +67,7 @@ public class PlayerTrackInfo {
         this.mDescription = mDescription;
     }
 
-    public void setmUri(Uri mUri) {
+    public void setmUri(String mUri) {
         this.mUri = mUri;
     }
 
@@ -232,6 +232,18 @@ public class PlayerTrackInfo {
             builder.append("\nMore details information here.");
         }
         return builder.toString();
+    }
+
+    public String getData(){
+        if (getFileName()!=null) return getFileName();
+        if (getmUri()!=null)return getmUri();
+        return null;
+    }
+
+    public String getTitle() {
+        if (getmRadio()!=null) return getmRadio();
+        if (getTrackName()!=null)return getTrackName();
+        return null;
     }
 
     /**

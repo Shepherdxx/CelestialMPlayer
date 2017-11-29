@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 
@@ -29,53 +30,58 @@ public class PreService extends Activity {
             return intent;
         }
 
+        public static Intent startBGService(Context context, int id, int pos) {
+            Intent intent = controlBGService(context,MP_BackgroundService.ACTION_PLAY);
+            Bundle b = new Bundle();
+            b.putInt("Playlist", id);
+            b.putInt("MPData", pos);
+            intent.putExtra("Bundle", b);
+            Log.i("PreService#1","Playlist" + id   +
+                    "MPData"   + pos
+            );
+            return intent;
+        }
+
+        public static Intent controlBGService(Context context, String action) {
+            Intent intent = new Intent(context, MP_BackgroundService.class);
+            intent.setAction(action);
+            return intent;
+        }
+
+
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
             final String action = getIntent().getAction();
-            Intent intent;
-            Bundle Bondiana;
-            int state;
+            final int id        = getIntent().getIntExtra("Playlist",Constants.PLAYLIST_All_Audio);
+            final int pos       = getIntent().getIntExtra("MPData",0);
+            Intent intent= new Intent(this, MP_BackgroundService.class);;
+            Bundle Bondiana= new Bundle();
             switch (action) {
                 case MP_BackgroundService.ACTION_PLAY:
-                case MP_BackgroundService.ACTION_PAUSE:
-                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
-                    intent = new Intent(this, MP_BackgroundService.class);
-                    Bondiana = new Bundle();
-                    Bondiana.putInt("MPType", 0);
-                    state = Constants.MP_PAUSE;
-                    Bondiana.putInt("MPState",state);
+                    Bondiana.putInt("Playlist", id);
+                    Bondiana.putInt("MPData", pos);
                     intent.putExtra("Bundle", Bondiana);
+                    intent.setAction(action);
+                    Log.i("PreService#1",action +
+                            "Playlist" + id   +
+                            "MPData"   + pos
+                    );
+                    startService(intent);
+//                case MP_BackgroundService.ACTION_PAUSE:
+                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
+                case MP_BackgroundService.ACTION_NEXT_SONG:
+                case MP_BackgroundService.ACTION_PREVIOUS_SONG:
                     intent.setAction(action);
                     startService(intent);
                     break;
 //                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK_DELAYED:
 //                case MP_BackgroundService.ACTION_RANDOM_MIX_AUTOPLAY:
-                case MP_BackgroundService.ACTION_NEXT_SONG:
-                    intent = new Intent(this, MP_BackgroundService.class);
-                    Bondiana = new Bundle();
-                    Bondiana.putInt("MPType", 0);
-                    state = Constants.MP_NEXT;
-                    Bondiana.putInt("MPState",state);
-                    intent.putExtra("Bundle", Bondiana);
-                    intent.setAction(action);
-                    startService(intent);
-                    break;
 //                case MP_BackgroundService.ACTION_NEXT_SONG_DELAYED:
 //                case MP_BackgroundService.ACTION_NEXT_SONG_AUTOPLAY:
-                case MP_BackgroundService.ACTION_PREVIOUS_SONG:
 //                case MP_BackgroundService.ACTION_PREVIOUS_SONG_AUTOPLAY:
 //                case MP_BackgroundService.ACTION_CYCLE_SHUFFLE:
 //                case MP_BackgroundService.ACTION_CYCLE_REPEAT:
-                    intent = new Intent(this, MP_BackgroundService.class);
-                    Bondiana = new Bundle();
-                    Bondiana.putInt("MPType", 0);
-                    state = Constants.MP_BACK;
-                    Bondiana.putInt("MPState",state);
-                    intent.putExtra("Bundle", Bondiana);
-                    intent.setAction(action);
-                    startService(intent);
-                    break;
                 default:
                     throw new IllegalArgumentException("No such action: " + action);
             }

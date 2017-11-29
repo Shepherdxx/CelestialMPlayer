@@ -78,7 +78,7 @@ public class Fragment_Playlist extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             if (Type== Constants.MP_RADIO){
-                RadioBD radioBD=new RadioBD(getActivity());
+                RadioBD radioBD=new RadioBD();
             recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(radioBD.RadioList(), mListener));}
             else recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(PlayerTrackInfo.ITEMS, mListener,true));
 

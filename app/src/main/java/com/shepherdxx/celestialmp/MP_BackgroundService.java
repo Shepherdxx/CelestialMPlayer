@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,7 +22,11 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
+import com.shepherdxx.celestialmp.plailist.PlayListInfo;
+import com.shepherdxx.celestialmp.plailist.PlayListTrue;
+import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,21 +36,13 @@ import static android.widget.Toast.makeText;
 import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_BACK;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_FOWARD;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_NEXT;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RAW;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_STOP;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STOPED;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_TOWARD;
-import static com.shepherdxx.celestialmp.extras.Constants.SERVICE_START;
 
 
 public class MP_BackgroundService
@@ -60,19 +55,23 @@ public class MP_BackgroundService
 
     public static final String ACTION_PLAY = "com.shepherdxx.celestialmp.action.PLAY";
     public static final String ACTION_PAUSE = "com.shepherdxx.celestialmp.action.PAUSE";
+    public static final String ACTION_STOP = "com.shepherdxx.celestialmp.action.STOP";
     public static final String ACTION_TOGGLE_PLAYBACK = "com.shepherdxx.celestialmp.action.TOGGLE_PLAYBACK";
     public static final String ACTION_NEXT_SONG = "com.shepherdxx.celestialmp.action.NEXT_SONG";
     public static final String ACTION_PREVIOUS_SONG = "com.shepherdxx.celestialmp.action.PREVIOUS_SONG";
+    public static final String ACTION_FORWARD = "com.shepherdxx.celestialmp.action.FORWARD";
+    public static final String ACTION_TOWARD = "com.shepherdxx.celestialmp.action.TOWARD";
     String MP_LOG_TAG = "BackgroundService";
     public static MP_MediaPlayer mPlayer;
     int MPType, MPState;
     String MPData;
+    String SongTitle;
 
     Context context = this;
     Activity a;
     int mCurCheckPosition;
-    String[] SongPath;
-    String[] SongTitle;
+//    String[] SongPath;
+//    String[] SongTitle;
     Bundle Bondiana;
     BroadcastReceiver mNoiseReceiver;
     IntentFilter nF;
@@ -209,9 +208,8 @@ public class MP_BackgroundService
         sInstance = this;
         synchronized (sWait) {
             sWait.notifyAll();}
-
-
     }
+
 
     private void reqAudioFocus(){
         // Request audio focus for play back
@@ -239,58 +237,53 @@ public class MP_BackgroundService
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             boolean IntentCheck = intent.hasExtra(BUNDLE);
+            String action;
 
-            Log.i("getIntent", IntentCheck +" " + String.valueOf(mCurCheckPosition));
-            if (IntentCheck) {
-                Bondiana = intent.getBundleExtra(BUNDLE);
-                if (Bondiana.getInt("MPType")!=0)
-                    MPType = Bondiana.getInt("MPType");
-                MPState = Bondiana.getInt("MPState");
-            }
-//            else MPState= SERVICE_START;
             if (mPlayer == null) {
                 Log.i(MP_LOG_TAG,"mPlayer created");
                 mPlayer = new MP_MediaPlayer();
             }
 
-            Log.i(MP_LOG_TAG,mPlayer.toString()+ " " + String.valueOf(MPState));
-            switch (MPState) {
-                case SERVICE_START:
-                    mCurCheckPosition = Bondiana.getInt("MPData",1);
-                    Log.i(MP_LOG_TAG,"service started");
-                    getArrays();
-                    getMPData(mCurCheckPosition);
-                    Create(MPType,MPData, null);
-                    break;
-                case MP_STOP:
-                    if (mPlayer.isPlaying())onAir();
-                    break;
-                case MP_PAUSE:
-                    onAir();
-                    break;
-                case MP_FOWARD:
-                    ForwardScript();
-                    break;
-                case MP_TOWARD:
-                    TowardScript();
-                    break;
-                case MP_NEXT:
-                    NextSong();
-                    break;
-                case MP_BACK:
-                    prevSong();
-                    break;
-                case MP_PLAY:
-                    mCurCheckPosition = Bondiana.getInt("MPData");
-                    getArrays();
-                    getMPData(mCurCheckPosition);
-                    Create(MPType,MPData, this);
-                    break;
-            }
-            Log.i("Intent", MPData + " gained");
+                action= intent.getAction();
+                switch (action) {
+                    case ACTION_PAUSE:
+                        if (mPlayer.isPlaying())onAir();
+                        break;
+                    case ACTION_TOGGLE_PLAYBACK:
+                        onAir();
+                        break;
+                    case ACTION_FORWARD:
+                        ForwardScript();
+                        break;
+                    case ACTION_TOWARD:
+                        TowardScript();
+                        break;
+                    case ACTION_NEXT_SONG:
+                        NextSong();
+                        break;
+                    case ACTION_PREVIOUS_SONG:
+                        prevSong();
+                        break;
+                }
+                if (IntentCheck){Bondiana = intent.getBundleExtra(BUNDLE);
+                    switch (action) {
+                        case ACTION_PLAY:
+                            currentPlaylistId = Bondiana.getInt("Playlist");
+                            mCurCheckPosition   = Bondiana.getInt("MPData");
+                            Log.i(LOG_TAG, ACTION_PLAY +" "+ currentPlaylistId+ " MPData " + mCurCheckPosition);
+                            playListInfo=gainPlaylist(currentPlaylistId);
+                            getMPData(playListInfo,mCurCheckPosition);
+                            Create(MPType,MPData, this);
+                            break;
+                    }
+                }
+                Log.i(LOG_TAG, "onStartCommand " + action + MPData + " gained");
+
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
+
+    PlayListInfo playListInfo;
 
     @Override
     public void onRebind(Intent intent) {
@@ -361,35 +354,55 @@ public class MP_BackgroundService
 
 
     private void prevSong() {
+        PlayListInfo playListInfo=gainPlaylist(currentPlaylistId);
         boolean b = (mPlayer.isPlaying());
         boolean resume = true;
         if (mCurCheckPosition - 1 >= 0) {
             mCurCheckPosition = mCurCheckPosition - 1;
         } else resume = false;
-        getMPData(mCurCheckPosition);
+        getMPData(playListInfo,deltaChange(-1));
         OnPreparedListener onPreparedListener = b&&resume? this:null;
         Create(MPType,MPData, onPreparedListener);
     }
 
     private void NextSong() {
-        int NextPosition = (sharedPreferences.getString(REPEAT_MODE, DEFAULT_R_M)
-                .equals(getResources().getString(R.string.repeat_all)))? 1:mCurCheckPosition;
+        PlayListInfo playListInfo=gainPlaylist(currentPlaylistId);
         boolean b = (mPlayer.isPlaying());
-        mCurCheckPosition = (mCurCheckPosition + 1) >= SongPath.length ? NextPosition : mCurCheckPosition + 1;
-        getMPData(mCurCheckPosition);
+        getMPData(playListInfo,deltaChange(1));
         OnPreparedListener onPreparedListener = b? this:null;
         Create(MPType,MPData, onPreparedListener);
     }
 
-    private void getMPData(int Position) {
-        if (Position>SongPath.length){mCurCheckPosition = 0 ;Position=mCurCheckPosition;}
-        MPData = SongPath[Position];
-        Log.i("getMPData", String.valueOf(mCurCheckPosition));
+    private int deltaChange(int delta){
+        int NextPosition = (sharedPreferences.getString(REPEAT_MODE, DEFAULT_R_M)
+                .equals(getResources().getString(R.string.repeat_all)))? 0:mCurCheckPosition;
+        int sum=mCurCheckPosition + delta;
+        switch (delta){
+            case 1:
+                mCurCheckPosition =
+                        sum >= gainPlaylist(currentPlaylistId).audioTracks.size()?
+                                NextPosition : sum;
+                break;
+            case -1:
+                mCurCheckPosition = sum >= 0 ? NextPosition : sum;
+        }
+        return mCurCheckPosition;
     }
 
-    private void getArrays(){
-        SongPath = Bondiana.getStringArray("SongPath");
-        SongTitle= Bondiana.getStringArray("SongTitle");
+    private void getMPData(PlayListInfo pI, int Position) {
+        int length=pI.audioTracks.size();
+        if (Position>length){Position = 0 ;mCurCheckPosition=Position;}
+        PlayerTrackInfo pti= pI.audioTracks.get(Position);
+        MPData      = pti.getData();
+        SongTitle   = pti.getTitle();
+        MPType      = pI.plType;
+        Log.i(LOG_TAG,"getMPData " + length);
+        Log.i(LOG_TAG,"getMPData " + String.valueOf(mCurCheckPosition));
+    }
+
+    int currentPlaylistId;
+    private PlayListInfo gainPlaylist(int id){
+        return  new PlayListTrue(context).createPlaylist(id);
     }
 
 
@@ -453,9 +466,10 @@ public class MP_BackgroundService
             }
             Log.d("sender", "Broadcasting message");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }else {if(ResumeState){getMPData(mCurCheckPosition);
+        }else {if(ResumeState){getMPData(gainPlaylist(-1),mCurCheckPosition);
             Create(MPType,MPData, null);mPlayer.seekTo((int)startTimeBefore);onAir();}}
-
+        assert mPlayer != null;
+        MPState=mPlayer.getState();
         updateWidgets();
     }
 
@@ -557,7 +571,7 @@ public class MP_BackgroundService
 
         mPlayer.setMP_Type(mpType);
         mPlayer.setRequest(true);
-        mPlayer.setSongName(SongTitle[mCurCheckPosition]);
+        mPlayer.setSongName(SongTitle);
         mPlayer.setPosition(mCurCheckPosition);
         registerReceiver(mNoiseReceiver, nF);
         setVolume();
@@ -605,8 +619,7 @@ public class MP_BackgroundService
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
 //        Song song = mCurrentSong;
 
-        int state = MPState;
-        SmallWidget.updateAppWidget(this, manager, SongTitle[mCurCheckPosition], state);
+        SmallWidget.updateAppWidget(this, manager, SongTitle, MPState);
     }
 
     public static MP_BackgroundService get(Context context) {

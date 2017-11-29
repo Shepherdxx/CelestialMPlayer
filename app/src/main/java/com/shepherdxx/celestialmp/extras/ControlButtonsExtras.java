@@ -17,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.shepherdxx.celestialmp.MP_BackgroundService;
+import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
 
 import java.util.concurrent.TimeUnit;
@@ -383,25 +384,30 @@ public class ControlButtonsExtras implements
 
     @Override
     public void onClick(View v) {
+        String action;
         if (mPlayer!=null){
             switch (v.getId()) {
                 case R.id.fr_pausePlay:
-                    MPState = MP_PAUSE;
+                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
                     break;
                 case R.id.fr_forward:
-                    MPState = MP_FOWARD;
+                    action = MP_BackgroundService.ACTION_FORWARD;
                     break;
                 case R.id.fr_toward:
-                    MPState = MP_TOWARD;
+                    action = MP_BackgroundService.ACTION_TOWARD;
                     break;
                 case R.id.fr_next_song:
-                    MPState = MP_NEXT;
+                    action = MP_BackgroundService.ACTION_NEXT_SONG;
                     break;
                 case R.id.fr_back_song:
-                    MPState = MP_BACK;
+                    action = MP_BackgroundService.ACTION_PREVIOUS_SONG;
                     break;
+                default:
+                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
             }
-            activity.startService(CPIntent(MPState));
+            activity.startService(
+                    PreService.controlBGService(activity,action));
+//                    CPIntent(MPState));
         }else toastMessage("Нечего воспроизводить");
     }
 

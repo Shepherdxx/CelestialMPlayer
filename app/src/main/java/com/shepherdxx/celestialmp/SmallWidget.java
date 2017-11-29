@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.shepherdxx.celestialmp.extras.Constants;
+import com.shepherdxx.celestialmp.extras.PopUpToast;
+
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 /**
@@ -29,8 +32,7 @@ public class SmallWidget extends AppWidgetProvider {
 
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(context);
-            int c = service.mCurCheckPosition;
-            songName = service.SongTitle[c];
+            songName = service.SongTitle;
             state = service.MPState;
             Log.i("SmallWidget", songName + "" + state);
         }
@@ -67,8 +69,7 @@ public class SmallWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.small_widget);
         views.setTextViewText(R.id.appwidget_text, songName);
 
-        boolean playing = mPlayer.isOnAir();
-            views.setImageViewResource(R.id.sw_pausePlay,playing ?
+        views.setImageViewResource(R.id.sw_pausePlay,state== Constants.MP_PLAY?
                     R.drawable.ic_pause_circle_outline_black_48dp :
                     R.drawable.ic_play_circle_outline_black_48dp);
 

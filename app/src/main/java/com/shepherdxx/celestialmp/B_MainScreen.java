@@ -38,6 +38,7 @@ import com.shepherdxx.celestialmp.settings.SettingsActivity;
 import java.util.ArrayList;
 
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
 
 public class B_MainScreen extends AppCompatActivity
@@ -307,8 +308,11 @@ public class B_MainScreen extends AppCompatActivity
     public void onListFragmentInteraction(PlayerTrackInfo item, int position) {
         if (checkConnection()) {
             toolbar.setTitle(item.getmRadio());
-            radioBD = new RadioBD(this);
-            startService(radioBD.RadioIntent(position));
+            startService(
+                    PreService.startBGService(this,
+                            Constants.PLAYLIST_RADIO,
+                            position)
+            );
         }
     }
 

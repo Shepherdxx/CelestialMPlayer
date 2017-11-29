@@ -25,14 +25,18 @@ import java.util.Scanner;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
+import static com.shepherdxx.celestialmp.extras.Constants.PLAYLIST_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.URI_RADIO_BASE;
 import static com.shepherdxx.celestialmp.extras.Constants.URI_RADIO_AFTER_BASE;
+import static com.shepherdxx.celestialmp.extras.Constants._PLAYLIST_RADIO;
 
 /**
  * Created by Shepherdxx on 03.11.2017.
  */
 
 public class RadioBD {
+
+    public RadioBD(){}
 
     public RadioBD(Activity mActivity){
         this.mActivity = mActivity;
@@ -158,14 +162,14 @@ public class RadioBD {
 
 
     int index;
-    private Uri mUri;
+    private String mUri;
 //    AdapterMS mAdapter;
     RecyclerView mRadioList;
     LinearLayoutManager mLayoutManager;
     int mCurCheckPosition = 5;
     Context context;
     private Activity mActivity;
-    private ArrayList<PlayerTrackInfo> rows = new ArrayList<>();
+    private ArrayList<PlayerTrackInfo> rows=new ArrayList<>();
     String ERROR = "Check your connection";
     ImageButton btPlay, btNext, btBack;
     String[] RadioPath;
@@ -218,47 +222,50 @@ public class RadioBD {
         return RadioIntent(mCurCheckPosition);
     }
 
+    private PlayListInfo playListInfo;
     //создание плейлиста
     private void RadioPlayListCreation() {
-        MPType = MP_RADIO;
+//        playListInfo = new PlayListInfo(PLAYLIST_RADIO,_PLAYLIST_RADIO);
+//        playListInfo.plType=MP_RADIO;
         if (rows.isEmpty()) {
             for (index = 1; index <= 5; index++) {
-                mUri = Uri.parse(URI_RADIO_BASE + String.valueOf(index) + URI_RADIO_AFTER_BASE);
+                mUri = URI_RADIO_BASE + String.valueOf(index) + URI_RADIO_AFTER_BASE;
                 Log.i("Radio ", String.valueOf(index) + " " + String.valueOf(mUri));
-                rows.add(new PlayerTrackInfo("Radio " + String.valueOf(index), mUri.toString(), mUri));
+                rows.add(new PlayerTrackInfo("Radio " + String.valueOf(index), mUri, mUri));
             }
-            addMore();
-
+            addMoreTo(rows);
+//            playListInfo.audioTracks=rows;
+            RadioList=rows;
             Log.i("Radio", "плейлист создан");
         } else Log.i("Radio", "плейлист уже есть");
-        //Создание Листа путей
-        CreatePathList();
+//        //Создание Листа путей
+//        CreatePathList();
     }
 
-    private void addMore(){
+    private void addMoreTo(ArrayList<PlayerTrackInfo> PTI){
         for (int i = 0; i < adi.length; i++) {
-            mUri = Uri.parse(adi[i]);
+            mUri = adi[i];
             Log.i("Radio ", String.valueOf(index+i) + " " + String.valueOf(mUri));
-            rows.add(new PlayerTrackInfo("Radio " + String.valueOf(index+i), mUri.toString(), mUri));
+            PTI.add(new PlayerTrackInfo("Radio " + String.valueOf(index+i), mUri, mUri));
         }
     }
 
-    private void CreatePathList() {
-        int st;
-        RadioPath = new String[rows.size()];
-        songTitle = new String[rows.size()];
-        try {
-            for (st = 0; st < rows.size(); st++) {
-                RadioPath[st] = String.valueOf(rows.get(st).getmUri());
-                songTitle[st] = rows.get(st).getmRadio();
-                PlayerTrackInfo trackInfo = new PlayerTrackInfo(songTitle[st],String.valueOf(st),Uri.parse(RadioPath[st]));
-                RadioList.add(trackInfo);
-                System.out.println(RadioPath[st]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void CreatePathList() {
+//        int st;
+//        RadioPath = new String[rows.size()];
+//        songTitle = new String[rows.size()];
+//        try {
+//            for (st = 0; st < rows.size(); st++) {
+//                RadioPath[st] = String.valueOf(rows.get(st).getmUri());
+//                songTitle[st] = rows.get(st).getmRadio();
+//                PlayerTrackInfo trackInfo = new PlayerTrackInfo(songTitle[st],String.valueOf(st),Uri.parse(RadioPath[st]));
+//                RadioList.add(trackInfo);
+//                System.out.println(RadioPath[st]);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     ArrayList<PlayerTrackInfo> RadioList= new ArrayList<>();
 

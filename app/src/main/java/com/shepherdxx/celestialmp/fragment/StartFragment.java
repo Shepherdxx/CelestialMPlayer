@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.shepherdxx.celestialmp.MP_BackgroundService;
+import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
+import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClickListener;
@@ -127,7 +130,13 @@ public class StartFragment
 //    }
 
     @Override
-    public void onItemClick(View v, PlayListInfo obj, int position) {
+    public void onItemClick(View v, final PlayListInfo obj, int position) {
+        getActivity().startService(
+                PreService.startBGService(
+                        getContext(),
+                        (int)obj.getPlaylistId(),
+                        1)
+                );
         Log.i(Log_tag,String.valueOf(position));
     }
 
@@ -160,7 +169,7 @@ public class StartFragment
             infoList.add(PlayListInfo.All());
             infoList.add(PlayListInfo.Cache());
         }
-       setMyAdapter(infoList);
+        setMyAdapter(infoList);
     }
 
     public void setMyAdapter(final ArrayList<PlayListInfo> pLI) {

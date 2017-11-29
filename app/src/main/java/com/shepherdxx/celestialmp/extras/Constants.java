@@ -22,7 +22,7 @@ public final class Constants {
     public final static int MP_FOWARD = 2;
     public final static int MP_TOWARD = 3;
     public final static int MP_BACK = 4;
-    public final  static int MP_NEXT = 5;
+    public final static int MP_NEXT = 5;
     public final static int MP_STOP = 6;
     public final static int MP_HTTP=10;
     public final static int MP_RADIO =11;
@@ -30,8 +30,15 @@ public final class Constants {
     public final static int MP_RAW=13;
     public final static int MP_SD_U=14;
     public final static int MP_EMPTY=-1;
+    public static final int MP_BUTTON = 0;
     public final static int SERVICE_START =14;
 
+    public final static int PLAYLIST_All_Audio  = -1;
+    public final static int PLAYLIST_Cache      = -2;
+    public final static int PLAYLIST_RADIO      = -3;
+    public static final String _PLAYLIST_RADIO ="Radio playlist";
+    public static final String _PLAYLIST_All_Audio ="All Audio";
+    public static final String _PLAYLIST_Cache ="Cache";
 
 
 
@@ -63,6 +70,7 @@ public final class Constants {
     public final static int FILE_NAME_DES=3;
     public final static int FILE_L_M_ASC=4;
     public final static int FILE_L_M__DES=5;
+
 
     public static String BUNDLE = "Bundle";
     public static String iERROR = "Check your connection";
