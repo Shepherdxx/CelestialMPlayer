@@ -37,6 +37,8 @@ import com.shepherdxx.celestialmp.settings.SettingsActivity;
 
 import java.util.ArrayList;
 
+import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
+import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_START;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
@@ -53,7 +55,6 @@ public class B_MainScreen extends AppCompatActivity
     String Log_tag = B_MainScreen.class.getSimpleName();
 
     FragmentManager fragmentManager = getSupportFragmentManager();
-    RadioBD radioBD;
     Toolbar toolbar;
     String AlbumName, ArtistName, SongName;
 
@@ -104,8 +105,21 @@ public class B_MainScreen extends AppCompatActivity
         } else onStart = true;
 
         setDrawerLayout();
-        checkedFragment(FragmentId());
-        navViewCheckedItem();
+
+        String action = getIntent().getAction();
+            switch (action){
+                case ACTION_RESUME:
+                    int id;
+                    if (mPlayer.getMP_Type()==MP_RADIO)id=R.id.radio_activity;
+                    else id=R.id.player_activity;
+                    checkedFragment(id);
+                    navViewCheckedItem();
+                    break;
+                default:
+                    checkedFragment(FragmentId());
+                    navViewCheckedItem();
+                    break;
+            }
     }
 
     private int FragmentId() {

@@ -44,6 +44,7 @@ public class PlayListTrue {
                 current=PlayListInfo.Cache();
                 current.plType = Constants.MP_SD_U;
                 current.audioTracks=plCreate(id);
+                Log.i("PlayListTrue create", " " + current.audioTracks.size());
                 break;
             default:
                 current=null;
@@ -59,15 +60,14 @@ public class PlayListTrue {
         Log.i("plCreate", "плейлист подготовка");
         switch (id) {
             case Constants.PLAYLIST_RADIO:
-                 return new RadioBD().RadioList();
+                return new RadioBD().RadioList();
             case Constants.PLAYLIST_Cache:
-                loadTracks(MyCachePath.getAbsolutePath());
-                 break;
+                return loadTracks(MyCachePath.getAbsolutePath());
             case Constants.PLAYLIST_All_Audio:
-                loadTracks(null);
-                break;
+                return loadTracks(null);
+            default:
+                return null;
         }
-        return null;
     }
 
     private ArrayList<PlayerTrackInfo> loadTracks(String cUri) {
@@ -106,11 +106,11 @@ public class PlayListTrue {
                                 replace(".mp3", "").replace("_", " ").replace(artist, "").replace(" - ", "");
                     }
                     if (cUri==null){
-                        songSD = new PlayerTrackInfo(name, artist, album, url);
+                        songSD = new PlayerTrackInfo(url, name, artist, album);
                         rows.add(songSD);
                     Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);}
                     else if (f.exists() && f.getAbsolutePath().contains(cUri)) {
-                        songSD = new PlayerTrackInfo(name, artist, album, url);
+                        songSD = new PlayerTrackInfo(url, name, artist, album);
                         rows.add(songSD);
                         Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);
                     }
@@ -119,6 +119,7 @@ public class PlayListTrue {
             }
             cursor.close();
         }
+        Log.i(logTag,"rows "+ rows.size());
         return rows;
     }
 

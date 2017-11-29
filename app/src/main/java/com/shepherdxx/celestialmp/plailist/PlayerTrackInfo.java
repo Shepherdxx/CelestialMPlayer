@@ -43,6 +43,14 @@ public class PlayerTrackInfo {
         this.mUri = mUri;
         this.mDescription=mDescription;
     }
+
+    public PlayerTrackInfo(String mFileName,String mFilePath,long mFileSize,long mFileCreated) {
+        this.mFileName =  mFileName;
+        this.mFilePath = mFilePath;
+        this.mFileSize = mFileSize;
+        this.mFileCreated = mFileCreated;
+    }
+
     String mRadio;
     String mDescription;
     String mUri;
@@ -173,12 +181,7 @@ public class PlayerTrackInfo {
     private long mFileCreated;
 
 
-    public PlayerTrackInfo(String mFileName,String mFilePath,long mFileSize,long mFileCreated) {
-        this.mFileName =  mFileName;
-        this.mFilePath = mFilePath;
-        this.mFileSize = mFileSize;
-        this.mFileCreated = mFileCreated;
-    }
+
 
     public String getmFileName() {
         return mFileName;

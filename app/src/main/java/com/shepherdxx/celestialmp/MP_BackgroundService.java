@@ -37,6 +37,7 @@ import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RAW;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
@@ -207,6 +208,10 @@ public class MP_BackgroundService
         initWidgets();
         sInstance = this;
         synchronized (sWait) {
+            if (mPlayer==null) {
+                mCurCheckPosition = sharedPreferences.getInt("lastPos", 0);
+                currentPlaylistId = sharedPreferences.getInt("lastId", -1);
+            }
             sWait.notifyAll();}
     }
 
@@ -306,7 +311,6 @@ public class MP_BackgroundService
         // Unregister OnPreferenceChangedListener to avoid any memory leaks.
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
-
     }
 
     /**
@@ -330,11 +334,10 @@ public class MP_BackgroundService
                 // both cases the same way because our app is playing short sound files.
                 break;
             case AudioManager.AUDIOFOCUS_GAIN:
+                // The AUDIOFOCUS_GAIN case means we have regained focus and can resume playback.
                 Log.i("onAudioFocusChange","AUDIOFOCUS_GAIN");
                 if(ResumeState&!isOnAir()){onAir();
                     ResumeState=false;}
-                // The AUDIOFOCUS_GAIN case means we have regained focus and can resume playback.
-                onAir();
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
                 Log.i("onAudioFocusChange","AUDIOFOCUS_LOSS");
@@ -389,13 +392,17 @@ public class MP_BackgroundService
         return mCurCheckPosition;
     }
 
-    private void getMPData(PlayListInfo pI, int Position) {
-        int length=pI.audioTracks.size();
+    private void getMPData(PlayListInfo playListInfo, int Position) {
+        int length=playListInfo.audioTracks.size();
         if (Position>length){Position = 0 ;mCurCheckPosition=Position;}
-        PlayerTrackInfo pti= pI.audioTracks.get(Position);
+        PlayerTrackInfo pti= playListInfo.audioTracks.get(Position);
         MPData      = pti.getData();
         SongTitle   = pti.getTitle();
-        MPType      = pI.plType;
+        MPType      = playListInfo.plType;
+        sharedPreferences.edit()
+                .putInt("lastId",(int)playListInfo.playlistId)
+                .putInt("lastPos", Position)
+                .apply();
         Log.i(LOG_TAG,"getMPData " + length);
         Log.i(LOG_TAG,"getMPData " + String.valueOf(mCurCheckPosition));
     }
@@ -491,20 +498,6 @@ public class MP_BackgroundService
         }
     }
 
-//    private Toast toast;
-//    //Всплывающие сообщения
-//    void toastMessage(Context context, String cToast) {
-//        if (toast != null) {
-//            toast.cancel();
-//        }
-//        toast = makeText(context, cToast, Toast.LENGTH_SHORT);
-//        toast.show();
-//    }
-//    void toastMessage() {
-//        if (toast != null) {
-//            toast.cancel();
-//        }
-//    }
     private PopUpToast toast;
         //Всплывающие сообщения
         void toastMessage(String cToast) {
@@ -516,7 +509,6 @@ public class MP_BackgroundService
         }
 
 
-    //    private int MP_TYPE;
     String DATA_SD = Environment
             .getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
             + File.separator;
@@ -544,7 +536,7 @@ public class MP_BackgroundService
                     break;
                 case MP_SD:
                         Data=DATA_SD+Data;
-                        Log.i(LOG_TAG, "prepare SD");
+                        Log.i(LOG_TAG, "prepare SD" + File.pathSeparator + Data);
                         mPlayer.setDataSource(Data);
                         mPlayer.prepare();
                     break;
@@ -564,11 +556,8 @@ public class MP_BackgroundService
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.i(MP_LOG_TAG,"IOException" + e.toString());
-        } catch (RuntimeException e){
-            Log.i("ошибка", e.toString());
+            Log.i(MP_LOG_TAG, "IOException" + e.toString());
         }
-
         mPlayer.setMP_Type(mpType);
         mPlayer.setRequest(true);
         mPlayer.setSongName(SongTitle);

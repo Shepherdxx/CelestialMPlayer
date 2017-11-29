@@ -234,7 +234,7 @@ public class ControlButtonsExtras implements
             long sec = MILLISECONDS.toSeconds(finalTime) -
                     TimeUnit.MINUTES.toSeconds(MILLISECONDS.toMinutes(finalTime));
             oneTimeOnly = false;
-            seekBar.setMax((int) finalTime);
+            if (seekBar!=null)seekBar.setMax((int) finalTime);
             fTime.setText(String.format("%d:%d", min, sec));
             Log.i("seekBarInit", String.format("%d:%d", min, sec));
             Log.i("Title", SongTitle);
@@ -254,7 +254,6 @@ public class ControlButtonsExtras implements
                     switch (intent.getAction()){
                         case MP_STARTED:
                             Log.i(Log_Tag,"BroadcastReceiver recived MP_STARTED");
-//                        Title ();
                             visibilityCheck=true;
                             mType=MP_Type();
                             run();
@@ -355,7 +354,7 @@ public class ControlButtonsExtras implements
                         sTime.setVisibility(View.GONE);
                         fTime.setVisibility(View.GONE);
 
-                        seekBar.setVisibility(View.GONE);
+                        if (seekBar!=null) seekBar.setVisibility(View.GONE);
                         seekBar = null;
 
                         rTitle = view.findViewById(R.id.radio_title);

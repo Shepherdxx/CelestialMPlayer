@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 
+import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
+import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_START;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 public class PreService extends Activity {
@@ -55,19 +57,15 @@ public class PreService extends Activity {
             final String action = getIntent().getAction();
             final int id        = getIntent().getIntExtra("Playlist",Constants.PLAYLIST_All_Audio);
             final int pos       = getIntent().getIntExtra("MPData",0);
-            Intent intent= new Intent(this, MP_BackgroundService.class);;
-            Bundle Bondiana= new Bundle();
+            Intent intent= new Intent(this, MP_BackgroundService.class);
             switch (action) {
                 case MP_BackgroundService.ACTION_PLAY:
-                    Bondiana.putInt("Playlist", id);
-                    Bondiana.putInt("MPData", pos);
-                    intent.putExtra("Bundle", Bondiana);
-                    intent.setAction(action);
-                    Log.i("PreService#1",action +
-                            "Playlist" + id   +
-                            "MPData"   + pos
-                    );
-                    startService(intent);
+                    intent= new Intent(this,B_MainScreen.class);
+                    if (MP_BackgroundService.hasInstance()) {intent.setAction(ACTION_RESUME);}
+                    else intent.setAction(ACTION_START);
+                    Log.i("PreService#1",action);
+                    startActivity(intent);
+                    break;
 //                case MP_BackgroundService.ACTION_PAUSE:
                 case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
                 case MP_BackgroundService.ACTION_NEXT_SONG:
@@ -85,7 +83,7 @@ public class PreService extends Activity {
                 default:
                     throw new IllegalArgumentException("No such action: " + action);
             }
-
+            Log.i("PreService","get action " + action);
             finish();
         }
     }

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -13,6 +14,7 @@ import android.widget.RemoteViews;
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 /**
@@ -88,6 +90,10 @@ public class SmallWidget extends AppWidgetProvider {
         intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PREVIOUS_SONG);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_back_song, pendingIntent);
+
+        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PLAY);
+        pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
 
 
         // Instruct the widget manager to update the widget
