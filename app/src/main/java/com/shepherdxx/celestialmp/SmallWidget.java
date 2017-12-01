@@ -6,16 +6,10 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.shepherdxx.celestialmp.extras.Constants;
-import com.shepherdxx.celestialmp.extras.PopUpToast;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 /**
  * Implementation of App Widget functionality.
@@ -36,7 +30,7 @@ public class SmallWidget extends AppWidgetProvider {
             MP_BackgroundService service = MP_BackgroundService.get(context);
             songName = service.SongTitle;
             state = service.MPState;
-            Log.i("SmallWidget", songName + "" + state);
+            Log.i("SmallWidget", songName + " " + state);
         }
 
         sEnabled = true;
@@ -69,7 +63,7 @@ public class SmallWidget extends AppWidgetProvider {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.small_widget);
-        views.setTextViewText(R.id.appwidget_text, songName);
+        views.setTextViewText(R.id.sw_text, songName);
 
         views.setImageViewResource(R.id.sw_pausePlay,state== Constants.MP_PLAY?
                     R.drawable.ic_pause_circle_outline_black_48dp :
@@ -93,7 +87,7 @@ public class SmallWidget extends AppWidgetProvider {
 
         intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PLAY);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
+        views.setOnClickPendingIntent(R.id.sw_text, pendingIntent);
 
 
         // Instruct the widget manager to update the widget

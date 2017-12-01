@@ -8,26 +8,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shepherdxx.celestialmp.R;
-import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
-import com.shepherdxx.celestialmp.fragment.Fragment_Playlist.OnListFragmentInteractionListener;
+import com.shepherdxx.celestialmp.extras.FragmentListener;
+import com.shepherdxx.celestialmp.plailist.TrackInfo;
 import com.shepherdxx.celestialmp.fragment.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link FragmentListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlaylistRecyclerViewAdapter.ViewHolder> {
 
     String Tag= MyPlaylistRecyclerViewAdapter.class.getSimpleName();
-    private final List<PlayerTrackInfo> mValues;
-    private final List<PlayerTrackInfo.DummyItem> mDValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<TrackInfo> mValues;
+    private final List<TrackInfo.DummyItem> mDValues;
+//    private final OnListFragmentInteractionListener mListener;
+    private final FragmentListener mListener;
     boolean dummy;
 //    private final List<DummyItem> mValues;
-//    private final List<PlayerTrackInfo> mTValues;
+//    private final List<TrackInfo> mTValues;
 
 
 //    public MyPlaylistRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener,boolean dummy) {
@@ -37,14 +38,14 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
 //        mTValues = null;
 //    }
 
-    public MyPlaylistRecyclerViewAdapter(List<PlayerTrackInfo.DummyItem> items, OnListFragmentInteractionListener listener,boolean dummy) {
-        this.dummy= dummy;
+    public MyPlaylistRecyclerViewAdapter(FragmentListener listener,List<TrackInfo.DummyItem> items) {
+        this.dummy= true;
         mDValues = items;
         mListener = listener;
         mValues = null;
     }
 
-    public MyPlaylistRecyclerViewAdapter(List<PlayerTrackInfo> items, OnListFragmentInteractionListener listener) {
+    public MyPlaylistRecyclerViewAdapter(List<TrackInfo> items, FragmentListener listener) {
         this.dummy = false;
         mValues = items;
         mListener = listener;
@@ -67,10 +68,10 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
             holder.mContentView.setText(mDValues.get(position).content);
         }
         else {
-            Log.i("Tag","onBindViewHolder not dummy");
+//            Log.i("Tag","onBindViewHolder not dummy");
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(position));
-            holder.mContentView.setText(mValues.get(position).getmRadio());
+            holder.mIdView.setText(String.valueOf(position+1));
+            holder.mContentView.setText(mValues.get(position).getTitle());
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,8 +80,8 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     if (dummy){
-                        mListener.onListFragmentInteraction(holder.mDItem);}
-                        else mListener.onListFragmentInteraction(holder.mItem,position);
+                        mListener.onTrackClick(holder.mDItem);}
+                        else mListener.onTrackClick(holder.mItem,position);
                 }
             }
         });
@@ -91,7 +92,7 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
         if (dummy)
             return  mDValues.size();
         else{
-            Log.i("Tag","not dummy getItemCount "+ mValues.size());
+//            Log.i("Tag","not dummy getItemCount "+ mValues.size());
             return  mValues.size();}
     }
 
@@ -99,10 +100,10 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public PlayerTrackInfo mItem;
-        public PlayerTrackInfo.DummyItem mDItem;
+        public TrackInfo mItem;
+        public TrackInfo.DummyItem mDItem;
 //        public DummyItem mItem;
-//        public PlayerTrackInfo mpItem;
+//        public TrackInfo mpItem;
 
         public ViewHolder(View view) {
             super(view);

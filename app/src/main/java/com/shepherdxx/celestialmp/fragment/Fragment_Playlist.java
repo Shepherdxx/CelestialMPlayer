@@ -13,22 +13,27 @@ import android.view.ViewGroup;
 
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.Constants;
-import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
-import com.shepherdxx.celestialmp.plailist.RadioBD;
+import com.shepherdxx.celestialmp.extras.FragmentListener;
+import com.shepherdxx.celestialmp.plailist.PlayListInfo;
+import com.shepherdxx.celestialmp.plailist.PlayListTrue;
+import com.shepherdxx.celestialmp.plailist.TrackInfo;
+
+import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link FragmentListener}
  * interface.
  */
 public class Fragment_Playlist extends Fragment {
 
     // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_COLUMN_COUNT    = "column-count";
+    private static final String ARG_ID              = "playlist_id";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private FragmentListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,22 +41,22 @@ public class Fragment_Playlist extends Fragment {
      */
     public Fragment_Playlist() {
     }
-    static int Type;
+    private int playlistId;
 
-    public static Fragment_Playlist newInstance(int columnCount,int MP_Type) {
-        Type=MP_Type;
+    public static Fragment_Playlist newInstance(int columnCount,int playlistId) {
         Fragment_Playlist fragment = new Fragment_Playlist();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putInt(ARG_ID, playlistId);
         fragment.setArguments(args);
-        Log.i("Fragment_Playlist", "newInstance " + String.valueOf(MP_Type));
+        Log.i("Fragment_Playlist", "newInstance " + String.valueOf(playlistId));
         return fragment;
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static Fragment_Playlist newInstance(int columnCount) {
-        return newInstance(columnCount,0);
+        return newInstance(columnCount,Constants.MP_EMPTY);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class Fragment_Playlist extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            playlistId = getArguments().getInt(ARG_ID);
         }
     }
 
@@ -77,11 +83,15 @@ public class Fragment_Playlist extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            if (Type== Constants.MP_RADIO){
-                RadioBD radioBD=new RadioBD();
-            recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(radioBD.RadioList(), mListener));}
-            else recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(PlayerTrackInfo.ITEMS, mListener,true));
 
+            if (playlistId == Constants.MP_EMPTY){
+                recyclerView.setAdapter(
+                        new MyPlaylistRecyclerViewAdapter(mListener, TrackInfo.ITEMS));
+            }
+            else {
+                PlayListInfo playListInfo=new PlayListTrue(context).createPlaylist(playlistId);
+                ArrayList<TrackInfo> a = playListInfo.audioTracks;
+                recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(a, mListener));}
         }
         return view;
     }
@@ -91,8 +101,8 @@ public class Fragment_Playlist extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof FragmentListener) {
+            mListener = (FragmentListener) context;
             mContext = context;
         } else {
             throw new RuntimeException(context.toString()
@@ -106,19 +116,5 @@ public class Fragment_Playlist extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(PlayerTrackInfo.DummyItem item);
-        void onListFragmentInteraction(PlayerTrackInfo item, int position);
-    }
+
 }

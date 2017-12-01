@@ -22,11 +22,10 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListTrue;
-import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
+import com.shepherdxx.celestialmp.plailist.TrackInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +36,6 @@ import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RAW;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
@@ -64,7 +62,8 @@ public class MP_BackgroundService
     public static final String ACTION_TOWARD = "com.shepherdxx.celestialmp.action.TOWARD";
     String MP_LOG_TAG = "BackgroundService";
     public static MP_MediaPlayer mPlayer;
-    int MPType, MPState;
+    int MPType;
+    public int MPState;
     String MPData;
     String SongTitle;
 
@@ -248,11 +247,11 @@ public class MP_BackgroundService
                 Log.i(MP_LOG_TAG,"mPlayer created");
                 mPlayer = new MP_MediaPlayer();
             }
-
-                action= intent.getAction();
+            action= intent.getAction();
+            if (action != null)
                 switch (action) {
                     case ACTION_PAUSE:
-                        if (mPlayer.isPlaying())onAir();
+                        if (mPlayer.isPlaying()) onAir();
                         break;
                     case ACTION_TOGGLE_PLAYBACK:
                         onAir();
@@ -270,19 +269,26 @@ public class MP_BackgroundService
                         prevSong();
                         break;
                 }
-                if (IntentCheck){Bondiana = intent.getBundleExtra(BUNDLE);
+            if (IntentCheck) {
+                Bondiana = intent.getBundleExtra(BUNDLE);
+                if (action != null)
                     switch (action) {
                         case ACTION_PLAY:
                             currentPlaylistId = Bondiana.getInt("Playlist");
-                            mCurCheckPosition   = Bondiana.getInt("MPData");
-                            Log.i(LOG_TAG, ACTION_PLAY +" "+ currentPlaylistId+ " MPData " + mCurCheckPosition);
-                            playListInfo=gainPlaylist(currentPlaylistId);
-                            getMPData(playListInfo,mCurCheckPosition);
-                            Create(MPType,MPData, this);
+                            mCurCheckPosition = Bondiana.getInt("MPData");
+                            Log.i(LOG_TAG, ACTION_PLAY + " " + currentPlaylistId + " MPData " + mCurCheckPosition);
+                            playListInfo = gainPlaylist(currentPlaylistId);
+                            if (playListInfo == null) {
+                                new PopUpToast(context).setMessage("audioTracks not found");
+                                break;
+                            }
+                            getMPData(playListInfo, mCurCheckPosition);
+                            Create(MPType, MPData, this);
+                            mPlayer.setPlaylistId(currentPlaylistId);
                             break;
                     }
-                }
-                Log.i(LOG_TAG, "onStartCommand " + action + MPData + " gained");
+            }
+            Log.i(LOG_TAG, "onStartCommand " + action + MPData + " gained");
 
         }
         return START_NOT_STICKY;
@@ -395,7 +401,8 @@ public class MP_BackgroundService
     private void getMPData(PlayListInfo playListInfo, int Position) {
         int length=playListInfo.audioTracks.size();
         if (Position>length){Position = 0 ;mCurCheckPosition=Position;}
-        PlayerTrackInfo pti= playListInfo.audioTracks.get(Position);
+        TrackInfo pti= playListInfo.audioTracks.get(Position);
+        trackInfo = pti;
         MPData      = pti.getData();
         SongTitle   = pti.getTitle();
         MPType      = playListInfo.plType;
@@ -459,13 +466,11 @@ public class MP_BackgroundService
         if (mPlayer != null) {
             if (!isOnAir()) {
                 Log.e(MP_LOG_TAG, "onAir"+"Player status " + String.valueOf(isOnAir()));
-//                toastMessage(context, "Playing");
                 reqAudioFocus();
                 if (MPType!=MP_RADIO){mPlayer.setOnCompletionListener(this);}
             }else{
                 callback.onStop();
                 Log.e("offAir", "Player status" + String.valueOf(isOnAir()));
-//                toastMessage(context, "Pause");
                 mPlayer.pause();
                 startTimeBefore=mPlayer.getCurrentPosition();
                 ResumeState=true;
@@ -629,7 +634,18 @@ public class MP_BackgroundService
         return sInstance;
     }
 
+    TrackInfo trackInfo=null;
+    public TrackInfo getTrackInfo() {
+        return trackInfo;
+    }
 
+    public long getCurTime() {
+        return mPlayer.getCurrentPosition();
+    }
+
+    public void setCurTime(int time) {
+        mPlayer.seekTo(time);
+    }
 //
 //    @Override
 //    protected void onHandleIntent(Intent intent) {

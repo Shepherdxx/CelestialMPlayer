@@ -9,7 +9,7 @@
 
 
     <GridLayout
-        android:id="@+id/fr_control_buttons"
+        android:id="@+id/fr_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -76,44 +76,49 @@
 
     </GridLayout>
 
-    <TextView
-        android:id="@+id/radio_title"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/border_row"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_margin="2dp"/>
-
     <LinearLayout
         android:id="@+id/fr_time_text"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        >
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/radio_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/border_row"
+            android:gravity="center"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/fr_st_time"
+            style="@style/TimeTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="xx:xx"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:hint="xx:xx" />
+
         <SeekBar
             android:id="@+id/fr_sb_seekBar"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:progressDrawable="@drawable/style"
+            android:thumb="@drawable/seek_bar_thumb"
+         />
 
         <TextView
             android:id="@+id/fr_tl_time"
+            style="@style/TimeTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="zz:zz"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:hint="zz:zz" />
     </LinearLayout>
 </LinearLayout>

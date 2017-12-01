@@ -3,6 +3,12 @@
 
     <color name="foreground_dark_disabled">#50ffffff</color>
 
+    <color name="MediumSlateBlue">#7B68EE</color>
+    <color name="BlueViolet">#8A2BE2</color>
+    <color name="Indigo">#4B0082</color>
+    <color name="MediumPurple">#9370DB</color>
+
+
     <!--Material colors-->
     <!--In between colors were created with this tool:-->
     <!-- http://meyerweb.com/eric/tools/color-blend/#339999::1:hex -->

@@ -56,23 +56,23 @@ public class PlayListTrue {
 
 
     //Создаем плейлист
-    private ArrayList<PlayerTrackInfo> plCreate(int id) {
+    private ArrayList<TrackInfo> plCreate(int id) {
         Log.i("plCreate", "плейлист подготовка");
         switch (id) {
             case Constants.PLAYLIST_RADIO:
                 return new RadioBD().RadioList();
             case Constants.PLAYLIST_Cache:
-                return loadTracks(MyCachePath.getAbsolutePath());
+                return loadTracks(id, MyCachePath.getAbsolutePath());
             case Constants.PLAYLIST_All_Audio:
-                return loadTracks(null);
+                return loadTracks(id,null);
             default:
                 return null;
         }
     }
 
-    private ArrayList<PlayerTrackInfo> loadTracks(String cUri) {
-        ArrayList<PlayerTrackInfo> rows=new ArrayList<>();
-        PlayerTrackInfo songSD;
+    private ArrayList<TrackInfo> loadTracks(int id, String cUri) {
+        ArrayList<TrackInfo> rows=new ArrayList<>();
+        TrackInfo songSD;
         Uri uri = SD_check();
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
         String sortBy = MediaStore.Audio.Media.ARTIST;
@@ -81,6 +81,7 @@ public class PlayListTrue {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 String artist, name, album, url;
+                long duration;
                 do {
                     album = cursor.
                             getString((cursor.getColumnIndex(
@@ -105,12 +106,20 @@ public class PlayListTrue {
                                         MediaStore.Audio.Media.DISPLAY_NAME))).
                                 replace(".mp3", "").replace("_", " ").replace(artist, "").replace(" - ", "");
                     }
+
+                    duration = cursor.
+                            getLong((cursor.getColumnIndex(
+                                    MediaStore.Audio.Media.DURATION)));
+
+
                     if (cUri==null){
-                        songSD = new PlayerTrackInfo(url, name, artist, album);
+                        songSD = new TrackInfo(url, name, artist, album, duration);
+                        songSD.setPlaylistId(id);
                         rows.add(songSD);
                     Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);}
                     else if (f.exists() && f.getAbsolutePath().contains(cUri)) {
-                        songSD = new PlayerTrackInfo(url, name, artist, album);
+                        songSD = new TrackInfo(url, name, artist, album, duration);
+                        songSD.setPlaylistId(id);
                         rows.add(songSD);
                         Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);
                     }

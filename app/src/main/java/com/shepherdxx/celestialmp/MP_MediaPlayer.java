@@ -86,4 +86,13 @@ public class MP_MediaPlayer
         return false;
     };
 
+    private int playlistId;
+
+    public int getPlaylistId() {
+        return playlistId;
+    }
+
+    public void setPlaylistId(int id) {
+        this.playlistId = id;
+    }
 }

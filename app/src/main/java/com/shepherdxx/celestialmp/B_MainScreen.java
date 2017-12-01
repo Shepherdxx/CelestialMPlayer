@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -20,25 +19,26 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.ControlPanelButtonListener;
+import com.shepherdxx.celestialmp.extras.FragmentListener;
+import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.fragment.Fragment_KrasView;
 import com.shepherdxx.celestialmp.fragment.Fragment_Playlist;
 import com.shepherdxx.celestialmp.fragment.Fragment_VK;
 import com.shepherdxx.celestialmp.fragment.StartFragment;
-import com.shepherdxx.celestialmp.fragment.StartFragment.OnFragmentInteractionListener;
 import com.shepherdxx.celestialmp.fragment.dummy.DummyContent;
-import com.shepherdxx.celestialmp.plailist.PlayerTrackInfo;
-import com.shepherdxx.celestialmp.plailist.RadioBD;
+import com.shepherdxx.celestialmp.plailist.PlayListInfo;
+import com.shepherdxx.celestialmp.plailist.TrackInfo;
 import com.shepherdxx.celestialmp.settings.SettingsActivity;
 
 import java.util.ArrayList;
 
 import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
-import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_START;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
@@ -47,9 +47,8 @@ public class B_MainScreen extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener
         , ControlPanelButtonListener
-        , Fragment_Playlist.OnListFragmentInteractionListener
+        , FragmentListener
         , Fragment_VK.OnVKListFragmentInteractionListener
-        , OnFragmentInteractionListener
 
 {
     String Log_tag = B_MainScreen.class.getSimpleName();
@@ -93,6 +92,13 @@ public class B_MainScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_b_main_screen);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new PopUpToast(getBaseContext())
+                        .setMessage(getBaseContext().getResources().getString(R.string.develop));
+            }
+        });
         setSupportActionBar(toolbar);
 
         if (savedInstanceState != null) {
@@ -138,6 +144,7 @@ public class B_MainScreen extends AppCompatActivity
     void checkedFragment(int id) {
         Intent intent;
         checkedFragmentId = id;
+        int playlist_id;
         switch (id) {
             case R.id.player_playlist:
                 Fragment exchangeFragment = StartFragment.newInstance();
@@ -150,13 +157,17 @@ public class B_MainScreen extends AppCompatActivity
                 replacer(exchangeFragment);
                 break;
             case R.id.player_activity:
-                if (mPlayer != null)
-                    exchangeFragment = Fragment_Playlist.newInstance(1, Constants.MP_SD_U);
+                if (mPlayer != null) {
+                    playlist_id = mPlayer.getPlaylistId();
+                    if (playlist_id == Constants.PLAYLIST_RADIO)  playlist_id = Constants.PLAYLIST_All_Audio;
+                    exchangeFragment =
+                            Fragment_Playlist.newInstance(1, playlist_id);}
                 else exchangeFragment = Fragment_Playlist.newInstance(2);
                 replacer(exchangeFragment);
                 break;
             case R.id.radio_activity:
-                exchangeFragment = Fragment_Playlist.newInstance(1, Constants.MP_RADIO);
+                exchangeFragment =
+                        Fragment_Playlist.newInstance(1, Constants.PLAYLIST_RADIO);
                 replacer(exchangeFragment);
                 break;
             case R.id.vk_activity:
@@ -314,23 +325,6 @@ public class B_MainScreen extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(PlayerTrackInfo.DummyItem item) {
-
-    }
-
-    @Override
-    public void onListFragmentInteraction(PlayerTrackInfo item, int position) {
-        if (checkConnection()) {
-            toolbar.setTitle(item.getmRadio());
-            startService(
-                    PreService.startBGService(this,
-                            Constants.PLAYLIST_RADIO,
-                            position)
-            );
-        }
-    }
-
-    @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
@@ -372,10 +366,29 @@ public class B_MainScreen extends AppCompatActivity
         } else outState.putBoolean(onKrasView, false);
     }
 
+
+
+
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onPlaylistClick(PlayListInfo info) {
 
     }
 
+    @Override
+    public void onTrackClick(TrackInfo item, int position) {
+        if (checkConnection()) {
+            toolbar.setTitle(item.getmRadio());
+            int id = item.getPlaylistId();
+            startService(
+                    PreService.startBGService(this,
+                            id,
+                            position)
+            );
+        }
+    }
 
+    @Override
+    public void onTrackClick(TrackInfo.DummyItem item) {
+
+    }
 }

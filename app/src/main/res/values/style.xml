@@ -10,6 +10,13 @@
         <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
+    <style name="TimeTextStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/Indigo</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

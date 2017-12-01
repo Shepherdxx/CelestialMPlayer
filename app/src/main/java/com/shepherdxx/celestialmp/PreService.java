@@ -58,21 +58,23 @@ public class PreService extends Activity {
             final int id        = getIntent().getIntExtra("Playlist",Constants.PLAYLIST_All_Audio);
             final int pos       = getIntent().getIntExtra("MPData",0);
             Intent intent= new Intent(this, MP_BackgroundService.class);
-            switch (action) {
-                case MP_BackgroundService.ACTION_PLAY:
-                    intent= new Intent(this,B_MainScreen.class);
-                    if (MP_BackgroundService.hasInstance()) {intent.setAction(ACTION_RESUME);}
-                    else intent.setAction(ACTION_START);
-                    Log.i("PreService#1",action);
-                    startActivity(intent);
-                    break;
+            if (action != null)
+                switch (action) {
+                    case MP_BackgroundService.ACTION_PLAY:
+                        intent = new Intent(this, B_MainScreen.class);
+                        if (MP_BackgroundService.hasInstance()) {
+                                intent.setAction(ACTION_RESUME);
+                        } else  intent.setAction(ACTION_START);
+                        Log.i("PreService#1", intent.getAction());
+                        startActivity(intent);
+                        break;
+                    case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
+                    case MP_BackgroundService.ACTION_NEXT_SONG:
+                    case MP_BackgroundService.ACTION_PREVIOUS_SONG:
+                        intent.setAction(action);
+                        startService(intent);
+                        break;
 //                case MP_BackgroundService.ACTION_PAUSE:
-                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
-                case MP_BackgroundService.ACTION_NEXT_SONG:
-                case MP_BackgroundService.ACTION_PREVIOUS_SONG:
-                    intent.setAction(action);
-                    startService(intent);
-                    break;
 //                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK_DELAYED:
 //                case MP_BackgroundService.ACTION_RANDOM_MIX_AUTOPLAY:
 //                case MP_BackgroundService.ACTION_NEXT_SONG_DELAYED:
@@ -80,10 +82,10 @@ public class PreService extends Activity {
 //                case MP_BackgroundService.ACTION_PREVIOUS_SONG_AUTOPLAY:
 //                case MP_BackgroundService.ACTION_CYCLE_SHUFFLE:
 //                case MP_BackgroundService.ACTION_CYCLE_REPEAT:
-                default:
-                    throw new IllegalArgumentException("No such action: " + action);
-            }
-            Log.i("PreService","get action " + action);
+                    default:
+                        throw new IllegalArgumentException("No such action: " + action);
+                }
+            Log.i("PreService", "get action " + action);
             finish();
         }
     }

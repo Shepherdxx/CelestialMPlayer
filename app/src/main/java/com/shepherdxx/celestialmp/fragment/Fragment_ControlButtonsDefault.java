@@ -41,17 +41,16 @@ public class Fragment_ControlButtonsDefault
     ControlButtonsExtras sbe;
     Activity mActivity;
     Handler myHandler= new Handler();
-    View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_control_buttons, container, false);
-        setSBE();
+        View view = inflater.inflate(R.layout.fragment_control_buttons, container, false);
+        setSBE(view);
         return view;
     }
 
-    void setSBE(){
+    void setSBE(View view){
         sbe= ControlButtonsExtras.setUpdateSongTime(mActivity,myHandler,view,listener);
     }
 

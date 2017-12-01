@@ -16,6 +16,7 @@ import com.shepherdxx.celestialmp.MP_BackgroundService;
 import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.Constants;
+import com.shepherdxx.celestialmp.extras.FragmentListener;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClickListener;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link StartFragment.OnFragmentInteractionListener} interface
+ * {@link FragmentListener} interface
  * to handle interaction events.
  * Use the {@link StartFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -45,7 +46,7 @@ public class StartFragment
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private FragmentListener mListener;
 
     public StartFragment() {
         // Required empty public constructor
@@ -95,18 +96,11 @@ public class StartFragment
         return mainView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof FragmentListener) {
+            mListener = (FragmentListener) context;
             this.context=context;
         } else {
             throw new RuntimeException(context.toString()
@@ -122,15 +116,10 @@ public class StartFragment
 
     String Log_tag = StartFragment.class.getSimpleName();
     PopUpToast popUpToast;
-//    @Override
-//    public void onItemClick(ImageView im, View v, PlayListInfo obj, int position) {
-//
-//        popUpToast=new PopUpToast(activity.getBaseContext());
-//        popUpToast.setMessage(obj.getName() +  " " +String.valueOf(obj.getPlaylistId()) );
-//    }
 
     @Override
     public void onItemClick(View v, final PlayListInfo obj, int position) {
+        mListener.onPlaylistClick(obj);
         getActivity().startService(
                 PreService.startBGService(
                         getContext(),
@@ -139,22 +128,6 @@ public class StartFragment
                 );
         Log.i(Log_tag,String.valueOf(position));
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 
     /**
      * Список плейлистов

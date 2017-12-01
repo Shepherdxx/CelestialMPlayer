@@ -29,7 +29,7 @@ public final class Constants {
     public final static int MP_SD=12;
     public final static int MP_RAW=13;
     public final static int MP_SD_U=14;
-    public final static int MP_EMPTY=-1;
+    public final static int MP_EMPTY=-0xA;
     public static final int MP_BUTTON = 0;
     public final static int SERVICE_START =14;
 

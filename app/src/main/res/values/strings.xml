@@ -116,7 +116,7 @@
     <string name="player_option_2">Cashe</string>
 
 
-    <string name="appwidget_text" translatable="false">EXAMPLE</string>
+    <string name="appwidget_text" translatable="false">Choose a song</string>
     <string name="configure">Configure</string>
     <string name="add_widget" translatable="false">Add widget</string>
 
@@ -209,4 +209,6 @@
 
     <string name="start_fragment">Choose our destiny</string>
     <string name="new_playlist">new Playlist</string>
+    <string name="button">control button</string>
+    <string name="develop">This function in development</string>
 </resources>

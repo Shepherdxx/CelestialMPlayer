@@ -33,7 +33,7 @@ public class PlayListInfo {
 
     public int plType;
 
-    public ArrayList<PlayerTrackInfo> audioTracks;
+    public ArrayList<TrackInfo> audioTracks;
 
     public long getPlaylistId()         {return playlistId;}
 
