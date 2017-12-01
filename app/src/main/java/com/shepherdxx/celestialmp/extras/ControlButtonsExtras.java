@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.shepherdxx.celestialmp.MP_BackgroundService;
 import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +50,32 @@ public class ControlButtonsExtras implements
     private Activity activity;
     private ControlPanelButtonListener listener;
     private String Log_Tag = ControlButtonsExtras.class.getSimpleName();
+    private ImageButton btPlay, btFw, btTw, btNext, btPrev;
+    private LinearLayout LL;
+    private PopUpToast toast;
     private long finalTime;
+    private boolean visibilityCheck = true;
+
+    public static ControlButtonsExtras setUpdateSongTime(Activity activity,
+                                                         final Handler myHandler,
+                                                         final View view,
+                                                         final ControlPanelButtonListener listener){
+        return new ControlButtonsExtras(activity, myHandler, view, listener);
+    }
+
+    private ControlButtonsExtras(Activity activity,
+                                 Handler myHandler,
+                                 View outerView,
+                                 ControlPanelButtonListener listener) {
+        this.activity = activity;
+        this.myHandler = myHandler;
+        this.view = outerView;
+        this.listener = listener;
+        setBroadcastReceiver();
+        findView();
+        updateUi();
+    }
+
 
 //    public static ControlButtonsExtras setUpdateSongTime(Activity activity,
 //                                                         final Handler myHandler,
@@ -62,31 +87,56 @@ public class ControlButtonsExtras implements
 //        return new ControlButtonsExtras(activity,myHandler,btPlay,seekBar,fTime,null,null);
 //    }
 
+    private MP_BackgroundService serviceOn = null;
 
-    //Поведение ползунка
-    private void seekBarListen(SeekBar seekBar) {
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                if (serviceOn != null) serviceOn.setCurTime(seekBar.getProgress());
-            }
-        });
+    private MyTrackInfo currentTrack() {
+        MyTrackInfo track = null;
+        if (MP_BackgroundService.hasInstance()) {
+            MP_BackgroundService service = MP_BackgroundService.get(activity);
+            serviceOn = service;
+            track = service.getTrackInfo();
+        }
+        return track;
     }
 
+    private int state() {
+        if (serviceOn != null) return serviceOn.MPState;
+        return MP_PLAY;
+    }
+
+    private int MP_Type() {
+        int type, id = MP_EMPTY;
+        if (currentTrack() != null) {
+            id = currentTrack().getPlaylistId();
+            Log.i(Log_Tag, "PlaylistId" + File.pathSeparator + id);
+        }
+        switch (id) {
+            case PLAYLIST_RADIO:
+                type = MP_RADIO;
+                break;
+            case MP_EMPTY:
+                type = MP_EMPTY;
+                break;
+            default:
+                type = MP_SD_U;
+                break;
+        }
+        Log.i(Log_Tag, "MP_Type" + File.pathSeparator + type);
+        return type;
+    }
+
+    private long curTime() {
+        if (serviceOn != null) return serviceOn.getCurTime();
+        return 0;
+    }
+
+    private boolean layoutEx(){
+        if (LL==null)return false;
+        return true;}
 
     @Override
     public void run() {
-        setVisibility();
+        updateUi();
         if (state() != MP_PAUSE) {
             long startTime = curTime();
             ButtonCheckEvent();
@@ -102,37 +152,54 @@ public class ControlButtonsExtras implements
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        String action;
+        if (currentTrack() != null) {
+            switch (v.getId()) {
+                case R.id.fr_pausePlay:
+                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
+                    break;
+                case R.id.fr_forward:
+                    action = MP_BackgroundService.ACTION_FORWARD;
+                    break;
+                case R.id.fr_toward:
+                    action = MP_BackgroundService.ACTION_TOWARD;
+                    break;
+                case R.id.fr_next_song:
+                    action = MP_BackgroundService.ACTION_NEXT_SONG;
+                    break;
+                case R.id.fr_back_song:
+                    action = MP_BackgroundService.ACTION_PREVIOUS_SONG;
+                    break;
+                default:
+                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
+            }
+            activity.startService(
+                    PreService.controlBGService(activity, action));
+        } else toastMessage("Нечего воспроизводить");
+    }
+
     /**
-     * Изменяет состояние ползунка бара
+     * Отображает продолжительность и название песни
      */
-    private void seekBarProgress() {
-        if (seekBar != null) {
-            long startTime = curTime();
-            setTime(sTime, startTime);
-            seekBar.setProgress((int) startTime);
+    public void Title() {
+        String SongTitle = " ";
+        long Duration = 0;
+        if (currentTrack() != null) {
+            SongTitle = currentTrack().getTitle();
+            Duration = currentTrack().getDuration();
+            finalTime = Duration;
+            setTime(fTime, finalTime);
+            setTime(sTime, curTime());
+            if (seekBar != null) seekBar.setMax((int) finalTime);
         }
-    }
-
-    MP_BackgroundService serviceOn = null;
-
-    private TrackInfo currentTrack() {
-        TrackInfo track = null;
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(activity);
-            serviceOn = service;
-            track = service.getTrackInfo();
+        if (listener != null) {
+            listener.getTrackName(SongTitle);
+            if (rTitle != null) rTitle.setText(SongTitle);
         }
-        return track;
-    }
-
-    private int state() {
-        if (serviceOn != null) return serviceOn.MPState;
-        return MP_PLAY;
-    }
-
-    private long curTime() {
-        if (serviceOn != null) return serviceOn.getCurTime();
-        return 0;
+        Log.i(Log_Tag, "SongTitle  " + File.pathSeparator + SongTitle);
+        Log.i(Log_Tag, "Title Time " + File.pathSeparator + Duration);
     }
 
     /**
@@ -155,25 +222,36 @@ public class ControlButtonsExtras implements
     }
 
     /**
-     * Отображает продолжительность и название песни
+     * Поведение ползунка
      */
-    public void Title() {
-        String SongTitle = " ";
-        long Duration = 0;
-        if (currentTrack() != null) {
-            SongTitle = currentTrack().getTitle();
-            Duration = currentTrack().getDuration();
-//            updateUi();
-            finalTime = Duration;
-            setTime(fTime, finalTime);
-            if (seekBar != null) seekBar.setMax((int) finalTime);
+    private void seekBarListen(SeekBar seekBar) {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (serviceOn != null) serviceOn.setCurTime(seekBar.getProgress());
+            }
+        });
+    }
+
+    /**
+     * Изменяет состояние ползунка бара
+     */
+    private void seekBarProgress() {
+        if (seekBar != null) {
+            long startTime = curTime();
+            setTime(sTime, startTime);
+            seekBar.setProgress((int) startTime);
         }
-        if (listener != null) {
-            listener.getTrackName(SongTitle);
-            if (rTitle != null) rTitle.setText(SongTitle);
-        }
-        Log.i(Log_Tag, "SongTitle  " + File.pathSeparator + SongTitle);
-        Log.i(Log_Tag, "Title Time " + File.pathSeparator + Duration);
     }
 
     private void setTime(TextView v, long time) {
@@ -221,38 +299,6 @@ public class ControlButtonsExtras implements
         LocalBroadcastManager.getInstance(activity).registerReceiver(MP_start, intentFilter);
     }
 
-    private void updateUi() {
-        findView();
-        setVisibility();
-    }
-
-    private boolean visibilityCheck = true;
-
-    public ControlButtonsExtras(
-            Activity activity,
-            Handler myHandler,
-            View outerView,
-            ControlPanelButtonListener listener
-    ) {
-        this.activity = activity;
-        this.myHandler = myHandler;
-        this.view = outerView;
-        this.listener = listener;
-        setBroadcastReceiver();
-        updateUi();
-    }
-
-    public static ControlButtonsExtras setUpdateSongTime(Activity activity,
-                                                         final Handler myHandler,
-                                                         final View view,
-                                                         final ControlPanelButtonListener listener
-    ) {
-        return new ControlButtonsExtras(activity, myHandler, view, listener);
-    }
-
-    private ImageButton btPlay, btFw, btTw, btNext, btPrev;
-    private LinearLayout LL;
-
     private void findView() {
         //Они будут на всех панелях
         LL = view.findViewById(R.id.fr_control_layout);
@@ -278,18 +324,11 @@ public class ControlButtonsExtras implements
         fTime = view.findViewById(R.id.fr_tl_time);
 
         rTitle = view.findViewById(R.id.radio_title);
-        Log.i(Log_Tag, "findView " + String.valueOf(view!=null));
-        Log.i(Log_Tag, "findView " + String.valueOf(LL!=null));
     }
 
-    boolean layoutEx(){
-        if (LL==null)return false;
-            return true;}
-
-    private void setVisibility() {
+    private void updateUi() {
         if (visibilityCheck) {
             int checkId = MP_Type();
-            int r;
             switch (checkId) {
                 case MP_RADIO:
                     if (layoutEx()) {
@@ -308,14 +347,15 @@ public class ControlButtonsExtras implements
                         rTitle.setVisibility(View.VISIBLE);
                     }
                     break;
-
                 case MP_SD_U:
                     if (layoutEx()) {
                         LL.setVisibility(View.VISIBLE);
+
                         btFw.setVisibility(View.VISIBLE);
                         btTw.setVisibility(View.VISIBLE);
                         sTime.setVisibility(View.VISIBLE);
                         fTime.setVisibility(View.VISIBLE);
+
                         if (seekBar == null) seekBar=view.findViewById(R.id.fr_sb_seekBar);
                         seekBar.setVisibility(View.VISIBLE);
                         seekBarListen(seekBar);
@@ -337,64 +377,11 @@ public class ControlButtonsExtras implements
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        String action;
-        if (currentTrack() != null) {
-            switch (v.getId()) {
-                case R.id.fr_pausePlay:
-                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
-                    break;
-                case R.id.fr_forward:
-                    action = MP_BackgroundService.ACTION_FORWARD;
-                    break;
-                case R.id.fr_toward:
-                    action = MP_BackgroundService.ACTION_TOWARD;
-                    break;
-                case R.id.fr_next_song:
-                    action = MP_BackgroundService.ACTION_NEXT_SONG;
-                    break;
-                case R.id.fr_back_song:
-                    action = MP_BackgroundService.ACTION_PREVIOUS_SONG;
-                    break;
-                default:
-                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
-            }
-            activity.startService(
-                    PreService.controlBGService(activity, action));
-        } else toastMessage("Нечего воспроизводить");
-    }
-
-    private PopUpToast toast;
-
-    //Всплывающие сообщения
+    /**
+     * Всплывающие сообщения
+     */
     private void toastMessage(String cToast) {
         toast = new PopUpToast(activity.getBaseContext());
         toast.setMessage(cToast);
-    }
-
-    private void toastMessage() {
-        toast.cancel();
-    }
-
-    private int MP_Type() {
-        int type, id = MP_EMPTY;
-        if (currentTrack() != null) {
-            id = currentTrack().getPlaylistId();
-            Log.i(Log_Tag, "PlaylistId" + File.pathSeparator + id);
-        }
-        switch (id) {
-            case PLAYLIST_RADIO:
-                type = MP_RADIO;
-                break;
-            case MP_EMPTY:
-                type = MP_EMPTY;
-                break;
-            default:
-                type = MP_SD_U;
-                break;
-        }
-        Log.i(Log_Tag, "MP_Type" + File.pathSeparator + type);
-        return type;
     }
 }

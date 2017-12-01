@@ -1,7 +1,7 @@
 package com.shepherdxx.celestialmp.extras;
 
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 /**
  * Created by Shepherdxx on 30.11.2017.
@@ -19,6 +19,6 @@ public interface FragmentListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     void onPlaylistClick (PlayListInfo item);
-    void onTrackClick (TrackInfo item, int position);
-    void onTrackClick (TrackInfo.DummyItem item);
+    void onTrackClick (MyTrackInfo item, int position);
+    void onTrackClick (MyTrackInfo.DummyItem item);
 }

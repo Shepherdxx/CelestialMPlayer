@@ -56,7 +56,7 @@ public class PlayListTrue {
 
 
     //Создаем плейлист
-    private ArrayList<TrackInfo> plCreate(int id) {
+    private ArrayList<MyTrackInfo> plCreate(int id) {
         Log.i("plCreate", "плейлист подготовка");
         switch (id) {
             case Constants.PLAYLIST_RADIO:
@@ -70,9 +70,9 @@ public class PlayListTrue {
         }
     }
 
-    private ArrayList<TrackInfo> loadTracks(int id, String cUri) {
-        ArrayList<TrackInfo> rows=new ArrayList<>();
-        TrackInfo songSD;
+    private ArrayList<MyTrackInfo> loadTracks(int id, String cUri) {
+        ArrayList<MyTrackInfo> rows=new ArrayList<>();
+        MyTrackInfo songSD;
         Uri uri = SD_check();
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
         String sortBy = MediaStore.Audio.Media.ARTIST;
@@ -113,12 +113,12 @@ public class PlayListTrue {
 
 
                     if (cUri==null){
-                        songSD = new TrackInfo(url, name, artist, album, duration);
+                        songSD = new MyTrackInfo(url, name, artist, album, duration);
                         songSD.setPlaylistId(id);
                         rows.add(songSD);
                     Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);}
                     else if (f.exists() && f.getAbsolutePath().contains(cUri)) {
-                        songSD = new TrackInfo(url, name, artist, album, duration);
+                        songSD = new MyTrackInfo(url, name, artist, album, duration);
                         songSD.setPlaylistId(id);
                         rows.add(songSD);
                         Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);

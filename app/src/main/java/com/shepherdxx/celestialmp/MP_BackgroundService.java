@@ -23,9 +23,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.shepherdxx.celestialmp.extras.PopUpToast;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListTrue;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -401,7 +401,7 @@ public class MP_BackgroundService
     private void getMPData(PlayListInfo playListInfo, int Position) {
         int length=playListInfo.audioTracks.size();
         if (Position>length){Position = 0 ;mCurCheckPosition=Position;}
-        TrackInfo pti= playListInfo.audioTracks.get(Position);
+        MyTrackInfo pti= playListInfo.audioTracks.get(Position);
         trackInfo = pti;
         MPData      = pti.getData();
         SongTitle   = pti.getTitle();
@@ -634,8 +634,8 @@ public class MP_BackgroundService
         return sInstance;
     }
 
-    TrackInfo trackInfo=null;
-    public TrackInfo getTrackInfo() {
+    MyTrackInfo trackInfo=null;
+    public MyTrackInfo getTrackInfo() {
         return trackInfo;
     }
 

@@ -25,10 +25,4 @@ public class PopUpToast extends Toast {
             popUpToast.show();}
     }
 
-   public void cancel(){
-        if (popUpToast != null) {
-            popUpToast.cancel();
-            popUpToast = null;
-        }
-    }
 }

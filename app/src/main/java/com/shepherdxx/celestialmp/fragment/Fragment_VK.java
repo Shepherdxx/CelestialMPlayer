@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.shepherdxx.celestialmp.R;
-import com.shepherdxx.celestialmp.fragment.dummy.DummyContent;
-import com.shepherdxx.celestialmp.fragment.dummy.DummyContent.DummyItem;
+import com.shepherdxx.celestialmp.extras.FragmentListener;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnVKListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link FragmentListener}
  * interface.
  */
 public class Fragment_VK extends Fragment {
@@ -26,7 +26,7 @@ public class Fragment_VK extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnVKListFragmentInteractionListener mListener;
+    private FragmentListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -68,7 +68,7 @@ public class Fragment_VK extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyVKRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new RVAdapter_VkPlaylist(mListener,MyTrackInfo.ITEMS));
         }
         return view;
     }
@@ -77,8 +77,8 @@ public class Fragment_VK extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnVKListFragmentInteractionListener) {
-            mListener = (OnVKListFragmentInteractionListener) context;
+        if (context instanceof FragmentListener) {
+            mListener = (FragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -91,18 +91,5 @@ public class Fragment_VK extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnVKListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onVKListFragmentInteraction(DummyItem item);
-    }
+
 }

@@ -1,5 +1,7 @@
 package com.shepherdxx.celestialmp.plailist;
 
+import android.media.MediaPlayer;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import static com.shepherdxx.celestialmp.extras.Constants.FILE_SIZE_DES;
  * Created by Shepherdxx on 03.11.2017.
  */
 
-public class TrackInfo {
+public class MyTrackInfo {
     private String fileName, trackName, Artist, Album;
     private long duration;
     private int vk_Id;
@@ -25,11 +27,11 @@ public class TrackInfo {
     private int mImageResourceId = NO_IMAGE_PROVAIDED;
     private static final int NO_IMAGE_PROVAIDED = -1;
 
-    public TrackInfo(String fileName, String trackName, String Artist, String Album) {
+    public MyTrackInfo(String fileName, String trackName, String Artist, String Album) {
       this(fileName, trackName, Artist, Album, 0);
    }
 
-    public TrackInfo(String fileName, String trackName, String Artist, String Album, int vk_Id){
+    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, int vk_Id){
         this.fileName = fileName;
         this.trackName=trackName;
         this.Artist=Artist;
@@ -37,7 +39,7 @@ public class TrackInfo {
         this.vk_Id=vk_Id;
    }
 
-    public TrackInfo(String fileName, String trackName, String Artist, String Album, long duration){
+    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, long duration){
         this.fileName = fileName;
         this.trackName=trackName;
         this.Artist=Artist;
@@ -45,22 +47,22 @@ public class TrackInfo {
         this.duration=duration;
     }
    
-    public TrackInfo(String mRadio, String mDescription, String mUri){
+    public MyTrackInfo(String mRadio, String mDescription, String mUri){
         this.mRadio = mRadio;
         this.mUri = mUri;
         this.mDescription=mDescription;
     }
 
-    public TrackInfo(String mFileName, String mFilePath, long mFileSize, long mFileCreated) {
+    public MyTrackInfo(String mFileName, String mFilePath, long mFileSize, long mFileCreated) {
         this.mFileName =  mFileName;
         this.mFilePath = mFilePath;
         this.mFileSize = mFileSize;
         this.mFileCreated = mFileCreated;
     }
 
-    String mRadio;
-    String mDescription;
-    String mUri;
+    private String mRadio;
+    private String mDescription;
+    private String mUri;
 
     public String getmRadio() {
         return mRadio;
@@ -70,7 +72,7 @@ public class TrackInfo {
         return mDescription;
     }
 
-    public String getmUri() {
+    private String getmUri() {
         return mUri;
     }
 
@@ -121,28 +123,28 @@ public class TrackInfo {
         return mImageResourceId!=NO_IMAGE_PROVAIDED;}
 
 
-    public static Comparator<TrackInfo> ScrollComparator(int var) {
-        Comparator<TrackInfo> comparator=null;
+    public static Comparator<MyTrackInfo> ScrollComparator(int var) {
+        Comparator<MyTrackInfo> comparator=null;
         switch (var) {
             case FILE_SIZE_ASC:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         long rollno1 = s1.getmFileSize();
                         long rollno2 = s2.getmFileSize();
                         /*For ascending order*/
                         return (int) rollno1 - (int) rollno2;}};
                 break;
             case FILE_SIZE_DES:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         long rollno1 = s1.getmFileSize();
                         long rollno2 = s2.getmFileSize();
                         /*For descending order*/
                         return (int) rollno2 - (int) rollno1;}};
                 break;
             case FILE_NAME_ASC:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         String StudentName1 = s1.getmFileName().toUpperCase();
                         String StudentName2 = s2.getmFileName().toUpperCase();
                         //ascending order
@@ -150,8 +152,8 @@ public class TrackInfo {
                 };
                 break;
             case FILE_NAME_DES:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         String StudentName1 = s1.getmFileName().toUpperCase();
                         String StudentName2 = s2.getmFileName().toUpperCase();
                         //descending order
@@ -160,8 +162,8 @@ public class TrackInfo {
                 };
                 break;
             case FILE_L_M_ASC:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         long rollno1 = s1.getmFileCreated();
                         long rollno2 = s2.getmFileCreated();
                             /*For ascending order*/
@@ -170,8 +172,8 @@ public class TrackInfo {
                 };
                 break;
             case FILE_L_M__DES:
-                comparator = new Comparator<TrackInfo>() {
-                    public int compare(TrackInfo s1, TrackInfo s2) {
+                comparator = new Comparator<MyTrackInfo>() {
+                    public int compare(MyTrackInfo s1, MyTrackInfo s2) {
                         long rollno1 = s1.getmFileSize();
                         long rollno2 = s2.getmFileSize();
                         /*For descending order*/
@@ -210,12 +212,12 @@ public class TrackInfo {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<TrackInfo.DummyItem> ITEMS = new ArrayList<TrackInfo.DummyItem>();
+    public static final List<MyTrackInfo.DummyItem> ITEMS = new ArrayList<MyTrackInfo.DummyItem>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, TrackInfo.DummyItem> ITEM_MAP = new HashMap<String, TrackInfo.DummyItem>();
+    public static final Map<String, MyTrackInfo.DummyItem> ITEM_MAP = new HashMap<String, MyTrackInfo.DummyItem>();
 
     private static final int COUNT = 25;
 
@@ -226,13 +228,13 @@ public class TrackInfo {
         }
     }
 
-    private static void addItem(TrackInfo.DummyItem item) {
+    private static void addItem(MyTrackInfo.DummyItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static TrackInfo.DummyItem createDummyItem(int position) {
-        return new TrackInfo.DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+    private static MyTrackInfo.DummyItem createDummyItem(int position) {
+        return new MyTrackInfo.DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
@@ -289,4 +291,5 @@ public class TrackInfo {
     public void setPlaylistId(int playlistId) {
         this.playlistId = playlistId;
     }
+
 }

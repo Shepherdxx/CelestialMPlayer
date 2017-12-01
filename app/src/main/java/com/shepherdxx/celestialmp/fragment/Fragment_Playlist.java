@@ -11,12 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shepherdxx.celestialmp.MP_BackgroundService;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.FragmentListener;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListTrue;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 import java.util.ArrayList;
 
@@ -87,13 +88,13 @@ public class Fragment_Playlist extends Fragment {
 
             if (playlistId == Constants.MP_EMPTY){
                 recyclerView.setAdapter(
-                        new MyPlaylistRecyclerViewAdapter(mListener, TrackInfo.ITEMS));
+                        new RVAdapter_MyPlaylist(mListener, MyTrackInfo.ITEMS));
             }
             else {
                 PlayListInfo playListInfo=new PlayListTrue(context).createPlaylist(playlistId);
                 try {
-                    ArrayList<TrackInfo> a = playListInfo.audioTracks;
-                    recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(a, mListener));
+                    ArrayList<MyTrackInfo> a = playListInfo.audioTracks;
+                    recyclerView.setAdapter(new RVAdapter_MyPlaylist(a, mListener));
                 }catch (NullPointerException e){
                     e.printStackTrace();
                     Log.e(Log_Tag,"Ошибка в плейлисте" + playlistId);
@@ -123,5 +124,18 @@ public class Fragment_Playlist extends Fragment {
         mListener = null;
     }
 
+    private void goTo(RecyclerView rw, int pos){
+        if (playlistId==currentTrackInfo().getPlaylistId())
+        rw.scrollToPosition(pos);
+    }
 
+    private MyTrackInfo currentTrackInfo() {
+        MyTrackInfo track = null;
+        if (MP_BackgroundService.hasInstance()) {
+            MP_BackgroundService service = MP_BackgroundService.get(getContext());
+//            serviceOn = service;
+            track = service.getTrackInfo();
+        }
+        return track;
+    }
 }

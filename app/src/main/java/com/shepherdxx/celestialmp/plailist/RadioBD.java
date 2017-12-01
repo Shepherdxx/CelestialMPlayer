@@ -167,7 +167,7 @@ public class RadioBD {
     int mCurCheckPosition = 5;
     Context context;
     private Activity mActivity;
-    private ArrayList<TrackInfo> rows=new ArrayList<>();
+    private ArrayList<MyTrackInfo> rows=new ArrayList<>();
     String ERROR = "Check your connection";
     ImageButton btPlay, btNext, btBack;
     String[] RadioPath;
@@ -245,7 +245,7 @@ public class RadioBD {
 //        CreatePathList();
     }
 
-    private void addMoreTo(ArrayList<TrackInfo> PTI){
+    private void addMoreTo(ArrayList<MyTrackInfo> PTI){
         for (int i = 0; i < adi.length; i++) {
             mUri = adi[i];
             Log.i("Radio ", String.valueOf(index+i) + " " + String.valueOf(mUri));
@@ -257,8 +257,8 @@ public class RadioBD {
         }
     }
 
-    private TrackInfo song(String mR, String mD, String mU , int id){
-        TrackInfo song = new TrackInfo(mR,
+    private MyTrackInfo song(String mR, String mD, String mU , int id){
+        MyTrackInfo song = new MyTrackInfo(mR,
                 mD,
                 mU);
         song.setPlaylistId(id);
@@ -273,7 +273,7 @@ public class RadioBD {
 //            for (st = 0; st < rows.size(); st++) {
 //                RadioPath[st] = String.valueOf(rows.get(st).getmUri());
 //                songTitle[st] = rows.get(st).getmRadio();
-//                TrackInfo trackInfo = new TrackInfo(songTitle[st],String.valueOf(st),Uri.parse(RadioPath[st]));
+//                MyTrackInfo trackInfo = new MyTrackInfo(songTitle[st],String.valueOf(st),Uri.parse(RadioPath[st]));
 //                RadioList.add(trackInfo);
 //                System.out.println(RadioPath[st]);
 //            }
@@ -282,9 +282,9 @@ public class RadioBD {
 //        }
 //    }
 
-    ArrayList<TrackInfo> RadioList= new ArrayList<>();
+    ArrayList<MyTrackInfo> RadioList= new ArrayList<>();
 
-    public ArrayList<TrackInfo> RadioList(){
+    public ArrayList<MyTrackInfo> RadioList(){
         RadioPlayListCreation();
         return RadioList;
     }

@@ -31,9 +31,8 @@ import com.shepherdxx.celestialmp.fragment.Fragment_KrasView;
 import com.shepherdxx.celestialmp.fragment.Fragment_Playlist;
 import com.shepherdxx.celestialmp.fragment.Fragment_VK;
 import com.shepherdxx.celestialmp.fragment.StartFragment;
-import com.shepherdxx.celestialmp.fragment.dummy.DummyContent;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import com.shepherdxx.celestialmp.settings.SettingsActivity;
 
 import java.util.ArrayList;
@@ -48,7 +47,6 @@ public class B_MainScreen extends AppCompatActivity
         NavigationView.OnNavigationItemSelectedListener
         , ControlPanelButtonListener
         , FragmentListener
-        , Fragment_VK.OnVKListFragmentInteractionListener
 
 {
     String Log_tag = B_MainScreen.class.getSimpleName();
@@ -95,8 +93,8 @@ public class B_MainScreen extends AppCompatActivity
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PopUpToast(getBaseContext())
-                        .setMessage(getBaseContext().getResources().getString(R.string.develop));
+                toast=new PopUpToast(getBaseContext());
+                toast.setMessage(getBaseContext().getResources().getString(R.string.develop));
             }
         });
         setSupportActionBar(toolbar);
@@ -304,8 +302,8 @@ public class B_MainScreen extends AppCompatActivity
 
 
         MP_BackgroundService serviceOn=null;
-    private TrackInfo currentTrackInfo() {
-        TrackInfo track = null;
+    private MyTrackInfo currentTrackInfo() {
+        MyTrackInfo track = null;
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(this);
             serviceOn = service;
@@ -340,10 +338,7 @@ public class B_MainScreen extends AppCompatActivity
 
     }
 
-    @Override
-    public void onVKListFragmentInteraction(DummyContent.DummyItem item) {
 
-    }
 
     private Boolean checkConnection() {
         boolean isConnected = false;
@@ -386,7 +381,7 @@ public class B_MainScreen extends AppCompatActivity
     }
 
     @Override
-    public void onTrackClick(TrackInfo item, int position) {
+    public void onTrackClick(MyTrackInfo item, int position) {
         if (checkConnection()) {
             toolbar.setTitle(item.getmRadio());
             int id = item.getPlaylistId();
@@ -398,8 +393,10 @@ public class B_MainScreen extends AppCompatActivity
         }
     }
 
+    PopUpToast toast=null;
     @Override
-    public void onTrackClick(TrackInfo.DummyItem item) {
-
+    public void onTrackClick(MyTrackInfo.DummyItem item) {
+        toast=new PopUpToast(getBaseContext());
+        toast.setMessage("You click " + item.toString() );
     }
 }

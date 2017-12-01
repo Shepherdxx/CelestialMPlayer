@@ -9,48 +9,36 @@ import android.widget.TextView;
 
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.FragmentListener;
-import com.shepherdxx.celestialmp.plailist.TrackInfo;
-import com.shepherdxx.celestialmp.fragment.dummy.DummyContent.DummyItem;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link MyTrackInfo.DummyItem} and makes a call to the
  * specified {@link FragmentListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlaylistRecyclerViewAdapter.ViewHolder> {
+public class RVAdapter_MyPlaylist extends RecyclerView.Adapter<RVAdapter_MyPlaylist.ViewHolder> {
 
-    String Tag= MyPlaylistRecyclerViewAdapter.class.getSimpleName();
-    private final List<TrackInfo> mValues;
-    private final List<TrackInfo.DummyItem> mDValues;
-//    private final OnListFragmentInteractionListener mListener;
+    private String Log_Tag= RVAdapter_MyPlaylist.class.getSimpleName();
+    private final List<MyTrackInfo> mValues;
+    private final List<MyTrackInfo.DummyItem> mDValues;
     private final FragmentListener mListener;
     boolean dummy;
-//    private final List<DummyItem> mValues;
-//    private final List<TrackInfo> mTValues;
 
-
-//    public MyPlaylistRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener,boolean dummy) {
-//        this.dummy= dummy;
-//        mValues = items;
-//        mListener = listener;
-//        mTValues = null;
-//    }
-
-    public MyPlaylistRecyclerViewAdapter(FragmentListener listener,List<TrackInfo.DummyItem> items) {
+    public RVAdapter_MyPlaylist(FragmentListener listener, List<MyTrackInfo.DummyItem> items) {
         this.dummy= true;
         mDValues = items;
         mListener = listener;
         mValues = null;
     }
 
-    public MyPlaylistRecyclerViewAdapter(List<TrackInfo> items, FragmentListener listener) {
+    public RVAdapter_MyPlaylist(List<MyTrackInfo> items, FragmentListener listener) {
         this.dummy = false;
         mValues = items;
         mListener = listener;
         mDValues = null;
-        Log.i("Tag","MyPlaylistRecyclerViewAdapter created");
+        Log.i("Tag","RVAdapter_MyPlaylist created");
     }
 
     @Override
@@ -97,15 +85,13 @@ public class MyPlaylistRecyclerViewAdapter extends RecyclerView.Adapter<MyPlayli
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public TrackInfo mItem;
-        public TrackInfo.DummyItem mDItem;
-//        public DummyItem mItem;
-//        public TrackInfo mpItem;
+        private final View mView;
+        private final TextView mIdView;
+        private final TextView mContentView;
+        private MyTrackInfo mItem;
+        private MyTrackInfo.DummyItem mDItem;
 
-        public ViewHolder(View view) {
+        private ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
