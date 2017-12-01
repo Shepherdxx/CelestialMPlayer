@@ -38,8 +38,6 @@ import com.shepherdxx.celestialmp.settings.SettingsActivity;
 import java.util.ArrayList;
 
 import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
-import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
 
 public class B_MainScreen extends AppCompatActivity
@@ -105,7 +103,6 @@ public class B_MainScreen extends AppCompatActivity
             onKrasVPath = savedInstanceState.getString(onKrasL);
             checkedFragmentId = savedInstanceState.getInt(cFrId);
             fragmentId = savedInstanceState.getIntegerArrayList(frIdAr);
-//            checkedFragmentId= fragmentId != null ? fragmentId[fragmentId.length - 1] : dummyId;
         } else onStart = true;
 
         setDrawerLayout();
@@ -114,7 +111,9 @@ public class B_MainScreen extends AppCompatActivity
             switch (action){
                 case ACTION_RESUME:
                     int id;
-                    if (mPlayer.getMP_Type()==MP_RADIO)id=R.id.radio_activity;
+                    if (curTrackInfo() != null &&
+                            curTrackInfo().getPlaylistId()==Constants.PLAYLIST_RADIO)
+                        id=R.id.radio_activity;
                     else id=R.id.player_activity;
                     checkedFragment(id);
                     navViewCheckedItem();
@@ -125,6 +124,8 @@ public class B_MainScreen extends AppCompatActivity
                     break;
             }
     }
+
+
 
     private int FragmentId() {
         if (onStart) {
@@ -155,8 +156,8 @@ public class B_MainScreen extends AppCompatActivity
                 replacer(exchangeFragment);
                 break;
             case R.id.player_activity:
-                if (currentTrackInfo() != null) {
-                    playlist_id = currentTrackInfo().getPlaylistId();
+                if (curTrackInfo() != null) {
+                    playlist_id = curTrackInfo().getPlaylistId();
                     if (playlist_id == Constants.PLAYLIST_RADIO)  playlist_id = Constants.PLAYLIST_All_Audio;
                     exchangeFragment =
                             Fragment_Playlist.newInstance(1, playlist_id);}
@@ -301,22 +302,22 @@ public class B_MainScreen extends AppCompatActivity
     }
 
 
-        MP_BackgroundService serviceOn=null;
-    private MyTrackInfo currentTrackInfo() {
+//        MP_BackgroundService serviceOn=null;
+    private MyTrackInfo curTrackInfo() {
         MyTrackInfo track = null;
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(this);
-            serviceOn = service;
             track = service.getTrackInfo();
+//            serviceOn = service;
         }
         return track;
     }
 
     private String currentTrack() {
-        if (mPlayer != null) {
-            AlbumName = (mPlayer.getAlbumName() == null) ? "" : mPlayer.getAlbumName();
-            ArtistName = (mPlayer.getArtistName() == null) ? "" : mPlayer.getArtistName();
-            SongName = (mPlayer.getSongName() == null) ? "" : mPlayer.getSongName();
+        if (curTrackInfo()!=null) {
+            AlbumName = (curTrackInfo().getAlbum() == null) ? ""    : curTrackInfo().getAlbum();
+            ArtistName = (curTrackInfo().getArtist() == null) ? ""  : curTrackInfo().getArtist();
+            SongName = (curTrackInfo().getTitle() == null) ? ""     : curTrackInfo().getTitle();
         }
         if (AlbumName.equals("") || ArtistName.equals("") || SongName.equals("")) {
             return (SongName + " " + AlbumName + " " + ArtistName);

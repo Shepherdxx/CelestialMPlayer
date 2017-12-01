@@ -14,8 +14,6 @@ import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.ControlButtonsExtras;
 import com.shepherdxx.celestialmp.extras.ControlPanelButtonListener;
 
-import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
-
 
 public class Fragment_ControlButtonsDefault
         extends Fragment
@@ -63,7 +61,6 @@ public class Fragment_ControlButtonsDefault
     @Override
     public void onResume() {
         super.onResume();
-        if (mPlayer!=null) Log.i(Log_Tag,mPlayer.toString());
         try {sbe.run();
             sbe.Title();
         }catch (NullPointerException e) {

@@ -81,7 +81,7 @@ public class SmallWidget extends AppWidgetProvider {
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_next_song, pendingIntent);
 
-        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PREVIOUS_SONG);
+        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PREV_SONG);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_back_song, pendingIntent);
 
@@ -99,5 +99,7 @@ public class SmallWidget extends AppWidgetProvider {
                                     AppWidgetManager manager) {
         sEnabled = manager.getAppWidgetIds(new ComponentName(context, SmallWidget.class)).length != 0;
     }
+
+
 }
 

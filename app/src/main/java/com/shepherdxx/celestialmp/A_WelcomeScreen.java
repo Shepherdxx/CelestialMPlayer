@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 
 public class A_WelcomeScreen
@@ -27,7 +26,7 @@ public class A_WelcomeScreen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_screen);
-        if (mPlayer!=null){
+        if (MP_BackgroundService.hasPlayer()) {
             startActivity(
                     new Intent(A_WelcomeScreen.this,B_MainScreen.class)
                             .setAction(ACTION_RESUME));

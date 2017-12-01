@@ -23,10 +23,13 @@ import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_NEXT_SONG;
+import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_PREV_SONG;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARED;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
@@ -94,8 +97,8 @@ public class ControlButtonsExtras implements
         MyTrackInfo track = null;
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(activity);
-            serviceOn = service;
             track = service.getTrackInfo();
+            serviceOn = service;
         }
         return track;
     }
@@ -137,11 +140,9 @@ public class ControlButtonsExtras implements
     @Override
     public void run() {
         updateUi();
-        if (state() != MP_PAUSE) {
-            long startTime = curTime();
-            ButtonCheckEvent();
-            if (finalTime > startTime) seekBarProgress();
-        }
+        long startTime = curTime();
+        ButtonCheckEvent();
+        if (finalTime > startTime) seekBarProgress();
 
         if (Build.VERSION.SDK_INT >= 21) {
             if (!activity.requestVisibleBehind(true)) myHandler.removeCallbacks(this);
@@ -167,10 +168,10 @@ public class ControlButtonsExtras implements
                     action = MP_BackgroundService.ACTION_TOWARD;
                     break;
                 case R.id.fr_next_song:
-                    action = MP_BackgroundService.ACTION_NEXT_SONG;
+                    action = ACTION_NEXT_SONG;
                     break;
                 case R.id.fr_back_song:
-                    action = MP_BackgroundService.ACTION_PREVIOUS_SONG;
+                    action = MP_BackgroundService.ACTION_PREV_SONG;
                     break;
                 default:
                     action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
@@ -289,8 +290,8 @@ public class ControlButtonsExtras implements
                     String action = intent.getAction();
                     if (action != null)
                         switch (action) {
-                            case MP_PREPARED:
-                                Log.i(Log_Tag, "BroadcastReceiver recived MP_PREPARED");
+                            case MP_PREPARE_RADIO:
+                                Log.i(Log_Tag, "BroadcastReceiver recived MP_PREPARE_RADIO");
                                 visibilityCheck = true;
                                 run();
                                 loadRadio();
@@ -306,6 +307,11 @@ public class ControlButtonsExtras implements
                                 stop();
                                 visibilityCheck = true;
                                 break;
+                            case MP_PREPARE:
+                                visibilityCheck = true;
+                                run();
+                                Title();
+                                break;
                         }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -314,7 +320,8 @@ public class ControlButtonsExtras implements
         };
         //on Play
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MP_PREPARED);
+        intentFilter.addAction(MP_PREPARE_RADIO);
+        intentFilter.addAction(MP_PREPARE);
         intentFilter.addAction(MP_STARTED);
         intentFilter.addAction(MP_STOPED);
         LocalBroadcastManager.getInstance(activity).registerReceiver(MP_start, intentFilter);

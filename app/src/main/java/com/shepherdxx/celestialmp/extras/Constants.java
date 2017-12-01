@@ -12,26 +12,21 @@ public final class Constants {
     public static final String RECEIVER = "app.result.receiver";
     public static final String RECEIVER_DATA = RECEIVER + ".data";
 
-    public static final String MP_PREPARED  ="app.broadCast.MP_PREPARED";
-    public static final String MP_STARTED   ="app.broadCast.MP_STARTED";
-    public static final String MP_STOPED    ="app.broadCast.MP_STOPED";
+    public static final String MP_PREPARE_RADIO ="app.broadCast.MP_PREPARE_RADIO";
+    public static final String MP_PREPARE       ="app.broadCast.MP_PREPARE";
+    public static final String MP_STARTED       ="app.broadCast.MP_STARTED";
+    public static final String MP_STOPED        ="app.broadCast.MP_STOPED";
 
     public static final int SERVICE_DELAY = 6000;
 
-    public final static int MP_PAUSE = 0;
-    public final static int MP_PLAY = 1;
-    public final static int MP_FOWARD = 2;
-    public final static int MP_TOWARD = 3;
-    public final static int MP_BACK = 4;
-    public final static int MP_NEXT = 5;
-    public final static int MP_STOP = 6;
-    public final static int MP_HTTP=10;
-    public final static int MP_RADIO =11;
-    public final static int MP_SD=12;
-    public final static int MP_RAW=13;
-    public final static int MP_SD_U=14;
-    public final static int MP_EMPTY=-0xA;
-    public static final int MP_BUTTON = 0;
+    public final static int MP_PAUSE    = 0;
+    public final static int MP_PLAY     = 1;
+    public final static int MP_HTTP     =10;
+    public final static int MP_RADIO    =11;
+    public final static int MP_SD       =12;
+    public final static int MP_RAW      =13;
+    public final static int MP_SD_U     =14;
+    public final static int MP_EMPTY    =-0xA;
     public final static int SERVICE_START =14;
 
     public final static int PLAYLIST_All_Audio  = -1;

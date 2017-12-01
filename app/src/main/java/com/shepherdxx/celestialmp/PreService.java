@@ -3,7 +3,6 @@ package com.shepherdxx.celestialmp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -11,7 +10,6 @@ import com.shepherdxx.celestialmp.extras.Constants;
 
 import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
 import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_START;
-import static com.shepherdxx.celestialmp.MP_BackgroundService.mPlayer;
 
 public class PreService extends Activity {
         final static int INTENT_FLAGS = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -70,7 +68,7 @@ public class PreService extends Activity {
                         break;
                     case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
                     case MP_BackgroundService.ACTION_NEXT_SONG:
-                    case MP_BackgroundService.ACTION_PREVIOUS_SONG:
+                    case MP_BackgroundService.ACTION_PREV_SONG:
                         intent.setAction(action);
                         startService(intent);
                         break;
