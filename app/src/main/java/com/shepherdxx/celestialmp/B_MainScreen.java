@@ -157,8 +157,8 @@ public class B_MainScreen extends AppCompatActivity
                 replacer(exchangeFragment);
                 break;
             case R.id.player_activity:
-                if (mPlayer != null) {
-                    playlist_id = mPlayer.getPlaylistId();
+                if (currentTrackInfo() != null) {
+                    playlist_id = currentTrackInfo().getPlaylistId();
                     if (playlist_id == Constants.PLAYLIST_RADIO)  playlist_id = Constants.PLAYLIST_All_Audio;
                     exchangeFragment =
                             Fragment_Playlist.newInstance(1, playlist_id);}
@@ -302,6 +302,17 @@ public class B_MainScreen extends AppCompatActivity
 
     }
 
+
+        MP_BackgroundService serviceOn=null;
+    private TrackInfo currentTrackInfo() {
+        TrackInfo track = null;
+        if (MP_BackgroundService.hasInstance()) {
+            MP_BackgroundService service = MP_BackgroundService.get(this);
+            serviceOn = service;
+            track = service.getTrackInfo();
+        }
+        return track;
+    }
 
     private String currentTrack() {
         if (mPlayer != null) {

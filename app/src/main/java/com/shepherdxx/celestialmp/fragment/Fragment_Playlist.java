@@ -34,6 +34,7 @@ public class Fragment_Playlist extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private FragmentListener mListener;
+    private String Log_Tag = Fragment_Playlist.class.getSimpleName();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -90,8 +91,14 @@ public class Fragment_Playlist extends Fragment {
             }
             else {
                 PlayListInfo playListInfo=new PlayListTrue(context).createPlaylist(playlistId);
-                ArrayList<TrackInfo> a = playListInfo.audioTracks;
-                recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(a, mListener));}
+                try {
+                    ArrayList<TrackInfo> a = playListInfo.audioTracks;
+                    recyclerView.setAdapter(new MyPlaylistRecyclerViewAdapter(a, mListener));
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                    Log.e(Log_Tag,"Ошибка в плейлисте" + playlistId);
+                }
+            }
         }
         return view;
     }
