@@ -1,8 +1,12 @@
 package com.shepherdxx.celestialmp.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +25,9 @@ import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 
 import java.util.ArrayList;
 
+import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_STOPED;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -36,7 +43,8 @@ public class Fragment_Playlist extends Fragment {
     private int mColumnCount = 1;
     private FragmentListener mListener;
     private String Log_Tag = Fragment_Playlist.class.getSimpleName();
-
+    Context mContext;
+    RecyclerView recyclerView = null;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -69,6 +77,7 @@ public class Fragment_Playlist extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             playlistId = getArguments().getInt(ARG_ID);
         }
+        setBroadcastReceiver();
     }
 
     @Override
@@ -79,7 +88,7 @@ public class Fragment_Playlist extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -95,6 +104,7 @@ public class Fragment_Playlist extends Fragment {
                 try {
                     ArrayList<MyTrackInfo> a = playListInfo.audioTracks;
                     recyclerView.setAdapter(new RVAdapter_MyPlaylist(a, mListener));
+                    scrollTo(recyclerView);
                 }catch (NullPointerException e){
                     e.printStackTrace();
                     Log.e(Log_Tag,"Ошибка в плейлисте" + playlistId);
@@ -104,8 +114,6 @@ public class Fragment_Playlist extends Fragment {
         return view;
     }
 
-
-    Context mContext;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -124,18 +132,60 @@ public class Fragment_Playlist extends Fragment {
         mListener = null;
     }
 
-    private void goTo(RecyclerView rw, int pos){
-        if (playlistId==currentTrackInfo().getPlaylistId())
-        rw.scrollToPosition(pos);
+    private void scrollTo(RecyclerView rw){
+        if (rw != null) {
+            int id = Constants.MP_EMPTY;
+            if (currentTrackInfo() != null)
+                id = currentTrackInfo().getPlaylistId();
+            if (playlistId == id)
+                rw.scrollToPosition(currentTrackPos());
+        }
     }
 
     private MyTrackInfo currentTrackInfo() {
         MyTrackInfo track = null;
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(getContext());
-//            serviceOn = service;
             track = service.getTrackInfo();
         }
         return track;
+    }
+
+    private int currentTrackPos() {
+        int position = 0;
+        if (MP_BackgroundService.hasInstance()) {
+            MP_BackgroundService service = MP_BackgroundService.get(getContext());
+            position = service.getmCurPosition();
+        }
+        return position;
+    }
+
+    private void setBroadcastReceiver() {
+        BroadcastReceiver MP_start = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    String action = intent.getAction();
+                    if (action != null)
+                        switch (action) {
+                            case MP_STARTED:
+                                scrollTo(recyclerView);
+                                break;
+                        }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        //on Play
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MP_STARTED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(MP_start, intentFilter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        scrollTo(recyclerView);
     }
 }

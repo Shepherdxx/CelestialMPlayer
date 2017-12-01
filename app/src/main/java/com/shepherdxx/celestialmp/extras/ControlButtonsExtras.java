@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARED;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
@@ -131,8 +132,7 @@ public class ControlButtonsExtras implements
     }
 
     private boolean layoutEx(){
-        if (LL==null)return false;
-        return true;}
+        return (LL!=null);}
 
     @Override
     public void run() {
@@ -180,6 +180,20 @@ public class ControlButtonsExtras implements
         } else toastMessage("Нечего воспроизводить");
     }
 
+    /**
+     * Отображает продолжительность и название песни
+     */
+    public void loadRadio() {
+        String SongTitle = activity.getResources().getString(R.string.action_loading);
+        if (currentTrack() != null) {
+            SongTitle += " " + currentTrack().getTitle();
+            if (listener != null) {
+                listener.getTrackName(SongTitle);
+                if (rTitle != null) rTitle.setText(SongTitle);
+            }
+            Log.i(Log_Tag, "SongTitle  " + File.pathSeparator + SongTitle);
+        }
+    }
     /**
      * Отображает продолжительность и название песни
      */
@@ -275,6 +289,12 @@ public class ControlButtonsExtras implements
                     String action = intent.getAction();
                     if (action != null)
                         switch (action) {
+                            case MP_PREPARED:
+                                Log.i(Log_Tag, "BroadcastReceiver recived MP_PREPARED");
+                                visibilityCheck = true;
+                                run();
+                                loadRadio();
+                                break;
                             case MP_STARTED:
                                 Log.i(Log_Tag, "BroadcastReceiver recived MP_STARTED");
                                 visibilityCheck = true;
@@ -294,6 +314,7 @@ public class ControlButtonsExtras implements
         };
         //on Play
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MP_PREPARED);
         intentFilter.addAction(MP_STARTED);
         intentFilter.addAction(MP_STOPED);
         LocalBroadcastManager.getInstance(activity).registerReceiver(MP_start, intentFilter);

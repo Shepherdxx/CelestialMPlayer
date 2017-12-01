@@ -36,6 +36,8 @@ import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARED;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RADIO;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_RAW;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
@@ -63,13 +65,13 @@ public class MP_BackgroundService
     String MP_LOG_TAG = "BackgroundService";
     public static MP_MediaPlayer mPlayer;
     int MPType;
-    public int MPState;
+    public int MPState=0;
     String MPData;
     String SongTitle;
 
     Context context = this;
     Activity a;
-    int mCurCheckPosition;
+    int mCurPosition;
 //    String[] SongPath;
 //    String[] SongTitle;
     Bundle Bondiana;
@@ -157,7 +159,8 @@ public class MP_BackgroundService
                    case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
                        //pause the music
                        makeText(context, "Слышь! Уши подбери!", Toast.LENGTH_LONG).show();
-                       if(mPlayer.isPlaying()){onAir();
+                       if(MPState==MP_PLAY){
+                           onAir();
                            ResumeState=true;
                            wasReceive=true;}
                        break;
@@ -181,6 +184,7 @@ public class MP_BackgroundService
     private void registerCallback(){ callback= new MediaSessionCompat.Callback() {
         @Override
         public void onPlay() {
+            mPlayer.start();
             registerReceiver(mNoiseReceiver, nF);
         }
 
@@ -208,13 +212,13 @@ public class MP_BackgroundService
         sInstance = this;
         synchronized (sWait) {
             if (mPlayer==null) {
-                mCurCheckPosition = sharedPreferences.getInt("lastPos", 0);
+                mCurPosition = sharedPreferences.getInt("lastPos", 0);
                 currentPlaylistId = sharedPreferences.getInt("lastId", -1);
             }
             sWait.notifyAll();}
     }
 
-
+    //TODO 1:
     private void reqAudioFocus(){
         // Request audio focus for play back
         int result = am.requestAudioFocus(this,
@@ -225,10 +229,9 @@ public class MP_BackgroundService
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mAudioFocusGranted = true;
-            mPlayer.start();
             callback.onPlay();
             ResumeState=false;
-            intent = new Intent(MP_STARTED);
+            broadcastIntent = new Intent(MP_STARTED);
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
             mAudioFocusGranted = false;
             toastMessage("Some Problem");
@@ -275,16 +278,15 @@ public class MP_BackgroundService
                     switch (action) {
                         case ACTION_PLAY:
                             currentPlaylistId = Bondiana.getInt("Playlist");
-                            mCurCheckPosition = Bondiana.getInt("MPData");
-                            Log.i(LOG_TAG, ACTION_PLAY + " " + currentPlaylistId + " MPData " + mCurCheckPosition);
+                            mCurPosition = Bondiana.getInt("MPData");
+                            Log.i(LOG_TAG, ACTION_PLAY + " " + currentPlaylistId + " MPData " + mCurPosition);
                             playListInfo = gainPlaylist(currentPlaylistId);
                             if (playListInfo == null) {
                                 new PopUpToast(context).setMessage("audioTracks not found");
                                 break;
                             }
-                            getMPData(playListInfo, mCurCheckPosition);
+                            getMPData(playListInfo, mCurPosition);
                             Create(MPType, MPData, this);
-                            mPlayer.setPlaylistId(currentPlaylistId);
                             break;
                     }
             }
@@ -366,8 +368,8 @@ public class MP_BackgroundService
         PlayListInfo playListInfo=gainPlaylist(currentPlaylistId);
         boolean b = (mPlayer.isPlaying());
         boolean resume = true;
-        if (mCurCheckPosition - 1 >= 0) {
-            mCurCheckPosition = mCurCheckPosition - 1;
+        if (mCurPosition - 1 >= 0) {
+            mCurPosition = mCurPosition - 1;
         } else resume = false;
         getMPData(playListInfo,deltaChange(-1));
         OnPreparedListener onPreparedListener = b&&resume? this:null;
@@ -384,23 +386,24 @@ public class MP_BackgroundService
 
     private int deltaChange(int delta){
         int NextPosition = (sharedPreferences.getString(REPEAT_MODE, DEFAULT_R_M)
-                .equals(getResources().getString(R.string.repeat_all)))? 0:mCurCheckPosition;
-        int sum=mCurCheckPosition + delta;
+                .equals(getResources().getString(R.string.repeat_all)))? 0: mCurPosition;
+        int sum= mCurPosition + delta;
         switch (delta){
             case 1:
-                mCurCheckPosition =
+                mCurPosition =
                         sum >= gainPlaylist(currentPlaylistId).audioTracks.size()?
                                 NextPosition : sum;
                 break;
             case -1:
-                mCurCheckPosition = sum >= 0 ? NextPosition : sum;
+                mCurPosition = sum >= 0 ? NextPosition : sum;
         }
-        return mCurCheckPosition;
+        return mCurPosition;
     }
 
     private void getMPData(PlayListInfo playListInfo, int Position) {
         int length=playListInfo.audioTracks.size();
-        if (Position>length){Position = 0 ;mCurCheckPosition=Position;}
+        if (Position>length){Position = 0 ;
+            mCurPosition =Position;}
         MyTrackInfo pti= playListInfo.audioTracks.get(Position);
         trackInfo = pti;
         MPData      = pti.getData();
@@ -411,7 +414,7 @@ public class MP_BackgroundService
                 .putInt("lastPos", Position)
                 .apply();
         Log.i(LOG_TAG,"getMPData " + length);
-        Log.i(LOG_TAG,"getMPData " + String.valueOf(mCurCheckPosition));
+        Log.i(LOG_TAG,"getMPData " + String.valueOf(mCurPosition));
     }
 
     int currentPlaylistId;
@@ -453,7 +456,7 @@ public class MP_BackgroundService
 
     boolean ResumeState;
     long startTimeBefore;
-    Intent intent;
+    Intent broadcastIntent;
 
     private boolean isOnAir() {
         boolean b=false;
@@ -474,15 +477,19 @@ public class MP_BackgroundService
                 mPlayer.pause();
                 startTimeBefore=mPlayer.getCurrentPosition();
                 ResumeState=true;
-                intent=new Intent(MP_STOPED);
+                broadcastIntent =new Intent(MP_STOPED);
             }
             Log.d("sender", "Broadcasting message");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }else {if(ResumeState){getMPData(gainPlaylist(-1),mCurCheckPosition);
+            sendMyBroadcast(broadcastIntent);
+        }else {if(ResumeState){getMPData(gainPlaylist(-1), mCurPosition);
             Create(MPType,MPData, null);mPlayer.seekTo((int)startTimeBefore);onAir();}}
         assert mPlayer != null;
         MPState=mPlayer.getState();
         updateWidgets();
+    }
+
+    public void sendMyBroadcast(Intent i) {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(i);
     }
 
     //Сброс проигрывателя
@@ -538,6 +545,8 @@ public class MP_BackgroundService
                         Log.i(LOG_TAG, "prepareAsync");
                         mPlayer.setOnPreparedListener(listener);
                         mPlayer.prepareAsync();
+                        broadcastIntent=new Intent(MP_PREPARED);
+                        sendMyBroadcast(broadcastIntent);
                     break;
                 case MP_SD:
                         Data=DATA_SD+Data;
@@ -566,7 +575,7 @@ public class MP_BackgroundService
         mPlayer.setMP_Type(mpType);
         mPlayer.setRequest(true);
         mPlayer.setSongName(SongTitle);
-        mPlayer.setPosition(mCurCheckPosition);
+        mPlayer.setPosition(mCurPosition);
         registerReceiver(mNoiseReceiver, nF);
         setVolume();
         setLoop();
@@ -576,16 +585,6 @@ public class MP_BackgroundService
     public void onPrepared(MediaPlayer mediaPlayer) {
         onAir();
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -646,22 +645,9 @@ public class MP_BackgroundService
     public void setCurTime(int time) {
         mPlayer.seekTo(time);
     }
-//
-//    @Override
-//    protected void onHandleIntent(Intent intent) {
-//        final ResultReceiver receiver = intent.getParcelableExtra(Constants.RECEIVER);
-//        receiver.send(Constants.STATUS_RUNNING, Bundle.EMPTY);
-//        final Bundle data = new Bundle();
-//
-//        try {
-//            Thread.sleep(Constants.SERVICE_DELAY);
-//            data.putString(Constants.RECEIVER_DATA, "Sample result data");
-//        } catch (InterruptedException e) {
-//            data.putString(Constants.RECEIVER_DATA, "Error");
-//        }
-//        receiver.send(Constants.STATUS_FINISHED, data);
-//    }
 
-
+    public int getmCurPosition() {
+        return mCurPosition;
+    }
 
 }

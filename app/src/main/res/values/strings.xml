@@ -210,5 +210,7 @@
     <string name="start_fragment">Choose our destiny</string>
     <string name="new_playlist">new Playlist</string>
     <string name="button">control button</string>
+
     <string name="develop">This function in development</string>
+    <string name="action_loading">Loading</string>
 </resources>

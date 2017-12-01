@@ -12,8 +12,9 @@ public final class Constants {
     public static final String RECEIVER = "app.result.receiver";
     public static final String RECEIVER_DATA = RECEIVER + ".data";
 
-    public static final String MP_STARTED ="app.broadCast.MP_STARTED";
-    public static final String MP_STOPED ="app.broadCast.MP_STOPED";
+    public static final String MP_PREPARED  ="app.broadCast.MP_PREPARED";
+    public static final String MP_STARTED   ="app.broadCast.MP_STARTED";
+    public static final String MP_STOPED    ="app.broadCast.MP_STOPED";
 
     public static final int SERVICE_DELAY = 6000;
 
