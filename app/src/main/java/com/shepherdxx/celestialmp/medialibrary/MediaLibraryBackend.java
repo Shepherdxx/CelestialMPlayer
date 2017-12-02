@@ -91,7 +91,7 @@ public class MediaLibraryBackend
          * @param id the song id to query
          * @return the value of `column'
          */
-    long getColumnFromSongId(String column, long id) {
+    public long getColumnFromSongId(String column, long id) {
         long mtime = 0;
         Cursor cursor = query(false, MediaLibrary.TABLE_SONGS, new String[]{ column }, MediaLibrary.SongColumns._ID+"="+Long.toString(id), null, null, null, null, "1");
         if (cursor.moveToFirst())

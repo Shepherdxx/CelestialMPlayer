@@ -6,9 +6,12 @@ import android.text.TextUtils;
 
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.medialibrary.MediaLibrary;
+import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import com.shepherdxx.celestialmp.plailist.Song;
 
 import java.util.ArrayList;
+
+import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 
 /**
  * Created by Shepherdxx on 02.11.2017.
@@ -33,12 +36,12 @@ public class PlayList {
      *
      * @param context the context to use
      * @param name The name of the playlist.
-     * @return The id of the playlist, or -1 if there is no playlist with the
+     * @return The id of the playlist, or {@link MP_EMPTY) if there is no playlist with the
      * given name.
      */
     public static long getPlaylist(Context context, String name)
     {
-        long id = -1;
+        long id = MP_EMPTY;
         final String[] projection = { MediaLibrary.PlaylistColumns._ID };
         final String selection = MediaLibrary.PlaylistColumns.NAME+"=?";
         final String[] selectionArgs = { name };
@@ -64,7 +67,7 @@ public class PlayList {
     public static long createPlaylist(Context context, String name)
     {
         long id = getPlaylist(context, name);
-        if (id != -1)
+        if (id != MP_EMPTY)
             deletePlaylist(context, id);
 
         id = MediaLibrary.createPlaylist(context, name);
@@ -103,7 +106,7 @@ public class PlayList {
      * @return The number of songs that were added to the playlist.
      */
     public static int addToPlaylist(Context context, long playlistId, ArrayList<Long> audioIds) {
-        if (playlistId == -1)
+        if (playlistId == MP_EMPTY)
             return 0;
         return MediaLibrary.addToPlaylist(context, playlistId, audioIds);
     }
@@ -119,7 +122,7 @@ public class PlayList {
      * @return The number of songs that were removed from the playlist
      */
     public static int removeFromPlaylist(Context context, long playlistId, ArrayList<Long> audioIds) {
-        if (playlistId == -1)
+        if (playlistId == MP_EMPTY)
             return 0;
 
         String idList = TextUtils.join(", ", audioIds);
@@ -154,13 +157,13 @@ public class PlayList {
      *
      * @param context The Context to use
      * @param create Create the playlist if it does not exist
-     * @return the id of the playlist, -1 on error
+     * @return the id of the playlist, MP_EMPTY on error
      */
     public static long getFavoritesId(Context context, boolean create) {
         String playlistName = context.getString(R.string.playlist_favorites);
         long playlistId = getPlaylist(context, playlistName);
 
-        if (playlistId == -1 && create == true)
+        if (playlistId == MP_EMPTY && create == true)
             playlistId = createPlaylist(context, playlistName);
 
         return playlistId;
@@ -175,7 +178,7 @@ public class PlayList {
      * @return true if `song' was found in `playlistId'
      */
     public static boolean isInPlaylist(Context context, long playlistId, Song song) {
-        if (playlistId == -1 || song == null)
+        if (playlistId == MP_EMPTY || song == null)
             return false;
 
         boolean found = false;
@@ -198,15 +201,7 @@ public class PlayList {
     ////  //      //  //
 
 
-//    Context mBase;
-//    Uri uri=MediaStore.Audio.Playlists.getContentUri("playlist");
 //
-//    public void addnewPlaylist(String newplaylist) {
-//        ContentResolver resolver = mBase.getContentResolver();
-//        ContentValues values = new ContentValues(1);
-//        values.put(MediaStore.Audio.Playlists.NAME, newplaylist);
-//        resolver.insert(uri, values);
-//    }
 //
 //    public void addTrackToPlaylist(Context context, String audio_id,
 //                                   long playlist_id, int pos) {
@@ -222,16 +217,7 @@ public class PlayList {
 //    }
 //
 //
-//    public Cursor getandroidPlaylistcursor(Context context) {
-//        ContentResolver resolver = context.getContentResolver();
-//        final String id = MediaStore.Audio.Playlists._ID;
-//        final String name = MediaStore.Audio.Playlists.NAME;
-//        final String[] columns = { id, name };
-//        final String criteria = null;
-//        return  resolver.query(uri, columns, criteria, null,
-//                name + " ASC");
-//
-//    }
+
 //
 ////    private void oip(){
 ////    Cursor cursor = plist.getPlaylistTracks(getActivity(), playlist_id);

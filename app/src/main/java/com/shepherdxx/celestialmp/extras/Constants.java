@@ -2,6 +2,7 @@ package com.shepherdxx.celestialmp.extras;
 
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import java.io.File;
 
@@ -38,7 +39,8 @@ public final class Constants {
 
 
 
-
+    public static final String PLAYLIST_ID = MediaStore.Audio.Playlists.Members._ID;
+    public static final String AUDIO_ID = MediaStore.Audio.Playlists.Members.AUDIO_ID;
 
 
     public final static int YES=1;

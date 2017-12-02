@@ -2,12 +2,11 @@ package com.shepherdxx.celestialmp.plailist;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import com.shepherdxx.celestialmp.extras.Constants;
+import com.shepherdxx.celestialmp.playlist_imp.QueryTask;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +26,9 @@ public class PlayListTrue {
     public PlayListTrue(Context context)    {mContext = context;}
 
     public PlayListInfo createPlaylist(int id){
+        return createPlaylist(id,null);
+    }
+    public PlayListInfo createPlaylist(int id, String name){
         PlayListInfo current;
         switch (id){
             case Constants.PLAYLIST_RADIO:
@@ -47,94 +49,108 @@ public class PlayListTrue {
                 Log.i("PlayListTrue create", " " + current.audioTracks.size());
                 break;
             default:
-                current=null;
+                current=new PlayListInfo(id,name);
+                current.plType = Constants.MP_SD_U;
+                current.audioIds= getAudoiID(id);
+                ArrayList<Long> audioIds = current.audioIds;
+                current.audioTracks=plCreate(id,audioIds);
+                break;
         }
         return current;
     }
 
-
-
+    private ArrayList<MyTrackInfo> plCreate(int id) {
+        return plCreate(id, null);
+    }
 
     //Создаем плейлист
-    private ArrayList<MyTrackInfo> plCreate(int id) {
+    private ArrayList<MyTrackInfo> plCreate(int id,ArrayList<Long> audioIds) {
+        ArrayList<MyTrackInfo> cur;
         Log.i("plCreate", "плейлист подготовка");
         switch (id) {
             case Constants.PLAYLIST_RADIO:
-                return new RadioBD().RadioList();
+                cur = new RadioBD().RadioList();
+                break;
             case Constants.PLAYLIST_Cache:
-                return loadTracks(id, MyCachePath.getAbsolutePath());
-            case Constants.PLAYLIST_All_Audio:
-                return loadTracks(id,null);
+                cur = loadTracks(id, MyCachePath.getAbsolutePath(),audioIds);
+                break;
             default:
-                return null;
+                cur = loadTracks(id,null,audioIds);
+                break;
         }
+        if (cur!=null)Log.i("PlayListTrue create", " " + cur.size());
+        return cur;
     }
 
-    private ArrayList<MyTrackInfo> loadTracks(int id, String cUri) {
+    private ArrayList<MyTrackInfo> loadTracks(int id, String cUri, ArrayList<Long> audioIds) {
         ArrayList<MyTrackInfo> rows=new ArrayList<>();
-        MyTrackInfo songSD;
-        Uri uri = SD_check();
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!=0";
+        String table = "TRACK";
+
+
+        final String[] projection = {
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DURATION
+        };
+        String selection= MediaStore.Audio.Media.IS_MUSIC + "!=0";
+        if (audioIds!=null) selection = MediaStore.Audio.Media._ID;
         String sortBy = MediaStore.Audio.Media.ARTIST;
-        Log.i(logTag, "SD_check() " +uri.toString());
-        Cursor cursor = mContext.getContentResolver().query(uri, null, selection, null, sortBy);
+
+        QueryTask queryTask=new QueryTask(table, projection, selection, null, sortBy);
+        Cursor cursor=queryTask.runMyQuery(mContext);
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                String artist, name, album, url;
-                long duration;
-                do {
-                    album = cursor.
-                            getString((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.ALBUM)));
-                    artist = cursor.
-                            getString((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.ARTIST)));
-                    url = cursor.
-                            getString((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.DATA)));
-                    File f = new File(url);
+            MyTrackInfo songSD;
+            String artist, name, album, url;
+            long duration;
 
-                    name = cursor.
-                            getString((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.TITLE)));
+            while (cursor.moveToNext()) {
+                album = cursor.getString(3);
+                artist = cursor.getString(4);
+                url = cursor.getString(0);
+                name = cursor.getString(1);
+                duration = cursor.getLong(5);
 
-                    if (name == null && cursor.
-                            getString((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.DISPLAY_NAME))) != null) {
-                        name = cursor.
-                                getString((cursor.getColumnIndex(
-                                        MediaStore.Audio.Media.DISPLAY_NAME))).
-                                replace(".mp3", "").replace("_", " ").replace(artist, "").replace(" - ", "");
-                    }
+                if (name == null && cursor.getString(2) != null) {
+                    name = cursor.getString(2).
+                            replace(".mp3", "")
+                            .replace("_", " ")
+                            .replace(artist, "")
+                            .replace(" - ", "");
+                }
 
-                    duration = cursor.
-                            getLong((cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.DURATION)));
-
-
-                    if (cUri==null){
-                        songSD = new MyTrackInfo(url, name, artist, album, duration);
-                        songSD.setPlaylistId(id);
-                        rows.add(songSD);
-                    Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);}
-                    else if (f.exists() && f.getAbsolutePath().contains(cUri)) {
-                        songSD = new MyTrackInfo(url, name, artist, album, duration);
-                        songSD.setPlaylistId(id);
-                        rows.add(songSD);
-                        Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);
-                    }
-
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
+                File f = new File(url);
+                if (duration!=0)
+                if (cUri == null) {
+                    songSD = new MyTrackInfo(url, name, artist, album, duration);
+                    songSD.setPlaylistId(id);
+                    rows.add(songSD);
+                    Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);
+                } else if (f.exists() && f.getAbsolutePath().contains(cUri)) {
+                    songSD = new MyTrackInfo(url, name, artist, album, duration);
+                    songSD.setPlaylistId(id);
+                    rows.add(songSD);
+                    Log.i(logTag, "MusicScroll " + url + File.pathSeparator + name + File.pathSeparator + album);
+                }
+            }cursor.close();
         }
-        Log.i(logTag,"rows "+ rows.size());
         return rows;
     }
 
-    private Uri SD_check(){
-        if (Environment.getExternalStorageDirectory().exists())
-            return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        return  MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
+    private ArrayList<Long> getAudoiID(int playlistId) {
+        ArrayList<Long> ids = new ArrayList<>();
+        QueryTask queryTask = QueryTask.queryTask();
+        Cursor cursor = queryTask.audioId(mContext, playlistId);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            for(int r= 0; r<cursor.getCount(); r++, cursor.moveToNext()){
+                long id=cursor.getLong(0);
+                ids.add(id);
+                Log.i("getAudoiID", "AudoiID" + File.pathSeparator + id);
+            }cursor.close();
+        }
+        return ids;
     }
 }

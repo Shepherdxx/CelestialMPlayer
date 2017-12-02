@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
+
 /**
  * Created by Shepherdxx on 08.11.2017.
  */
@@ -89,7 +91,7 @@ public class MediaLibrary {
          */
         private static final Object[] sWait = new Object[0];
 
-        private static MediaLibraryBackend getBackend(Context context) {
+        public static MediaLibraryBackend getBackend(Context context) {
             if (sBackend == null) {
                 // -> unlikely
                 synchronized(sWait) {
@@ -338,7 +340,7 @@ public class MediaLibrary {
          *
          * @param context the context to use
          * @param name the name of the new playlist
-         * @return long the id of the created playlist, -1 on error
+         * @return long the id of the created playlist, MP_EMPTY on error
          */
         public static long createPlaylist(Context context, String name) {
             ContentValues v = new ContentValues();
@@ -346,7 +348,7 @@ public class MediaLibrary {
             v.put(MediaLibrary.PlaylistColumns.NAME, name);
             long id = getBackend(context).insert(MediaLibrary.TABLE_PLAYLISTS, null, v);
 
-            if (id != -1)
+            if (id != MP_EMPTY)
                 notifyObserver(false);
             return id;
         }

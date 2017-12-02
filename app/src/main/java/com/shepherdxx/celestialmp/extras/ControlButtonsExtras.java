@@ -140,9 +140,7 @@ public class ControlButtonsExtras implements
     @Override
     public void run() {
         updateUi();
-        long startTime = curTime();
-        ButtonCheckEvent();
-        if (finalTime > startTime) seekBarProgress();
+
 
         if (Build.VERSION.SDK_INT >= 21) {
             if (!activity.requestVisibleBehind(true)) myHandler.removeCallbacks(this);
@@ -274,7 +272,7 @@ public class ControlButtonsExtras implements
         long sec = MILLISECONDS.toSeconds(time) -
                 TimeUnit.MINUTES.toSeconds(MILLISECONDS.toMinutes(time));
         if (v != null) v.setText(String.format("%d:%d", min, sec));
-        Log.i("Controls", "setTime" + String.format("%d:%d", min, sec));
+//        Log.i("Controls", "setTime" + String.format("%d:%d", min, sec));
     }
 
     private void stop() {
@@ -305,11 +303,10 @@ public class ControlButtonsExtras implements
                             case MP_STOPED:
                                 Log.i(Log_Tag, "BroadcastReceiver recived MP_STOPED");
                                 stop();
-                                visibilityCheck = true;
                                 break;
                             case MP_PREPARE:
                                 visibilityCheck = true;
-                                run();
+                                updateUi();
                                 Title();
                                 break;
                         }
@@ -403,6 +400,9 @@ public class ControlButtonsExtras implements
             visibilityCheck = false;
             Log.i(Log_Tag, "visibilityCheck complete");
         }
+        long startTime = curTime();
+        ButtonCheckEvent();
+        if (finalTime > startTime) seekBarProgress();
     }
 
     /**

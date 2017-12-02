@@ -1,28 +1,38 @@
 package com.shepherdxx.celestialmp.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
-import com.shepherdxx.celestialmp.MP_BackgroundService;
 import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
-import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.FragmentListener;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
+import com.shepherdxx.celestialmp.medialibrary.MediaLibrary;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClickListener;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
+import com.shepherdxx.celestialmp.playlist_imp.PlayList;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 
 
 /**
@@ -89,7 +99,35 @@ public class StartFragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View mainView = inflater.inflate(R.layout.fragment_start, container, false);
-
+        mainView.findViewById(R.id.button_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog d = new Dialog(getContext());
+                d.setTitle(R.string.new_playlist);
+                View view = getLayoutInflater().inflate(R.layout.dialog_window,null);
+                final EditText et = view.findViewById(R.id.dialog_et);
+                view.findViewById(R.id.dialog_create).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String text = et.getText().toString().trim();
+                        popUpToast= new PopUpToast(getContext());
+                        if (text.isEmpty()) popUpToast.setMessage("Введите название");
+                        else{
+                            addnewPlaylist(text);
+                        popUpToast.setMessage(text);
+                        d.dismiss();}
+                    }
+                });
+                view.findViewById(R.id.dialog_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        d.dismiss();
+                    }
+                });
+                d.setContentView(view);
+                d.show();
+            }
+        });
         try {activity=getActivity();
             findView(mainView);
         }catch (IllegalArgumentException e){e.printStackTrace();}
@@ -141,6 +179,8 @@ public class StartFragment
         if (infoList.isEmpty()) {
             infoList.add(PlayListInfo.All());
             infoList.add(PlayListInfo.Cache());
+            morePlaylist(infoList);
+            getAndroidPlaylist(infoList);
         }
         setMyAdapter(infoList);
     }
@@ -153,5 +193,56 @@ public class StartFragment
 
     }
 
+    private void morePlaylist(ArrayList<PlayListInfo> PLI){
+        Cursor cursor = PlayList.queryPlaylists(getContext());
+        if (cursor != null) {
+            if (cursor.moveToNext()){
+                long id = cursor.getLong(0);
+                String name= cursor.getString(1);
+                PlayListInfo playListInfo=new PlayListInfo(id,name);
+                PLI.add(playListInfo);
+            }
+            cursor.close();
+        }
+    }
 
+    /////  //    //   //////
+    //      //  //    //   //
+    ////      //      //////
+    //      //  //    //
+    ////  //      //  //
+
+
+    Uri uri= MediaStore.Audio.Playlists.getContentUri("external");
+    public void addnewPlaylist(String newplaylist) {
+        ContentResolver resolver = getContext().getContentResolver();
+        ContentValues values = new ContentValues(1);
+        values.put(MediaStore.Audio.Playlists.NAME, newplaylist);
+        resolver.insert(uri, values);
+    }
+
+    public void getAndroidPlaylist(ArrayList<PlayListInfo> PLI) {
+        Cursor cursor = getandroidPlaylistcursor(getContext());
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                Log.i("getAndroidPlaylist", name + File.pathSeparator + id);
+                PlayListInfo playListInfo = new PlayListInfo(id, name);
+                PLI.add(playListInfo);
+            }
+            cursor.close();
+        }
+    }
+
+    public Cursor getandroidPlaylistcursor(Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        final String id = MediaStore.Audio.Playlists._ID;
+        final String name = MediaStore.Audio.Playlists.NAME;
+        final String[] columns = { id, name };
+        final String criteria = null;
+        return  resolver.query(uri, columns, criteria, null,
+                name + " ASC");
+
+    }
 }
