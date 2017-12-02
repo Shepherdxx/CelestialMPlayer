@@ -21,6 +21,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
@@ -34,6 +35,8 @@ import static android.widget.Toast.makeText;
 import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_ERROR;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE;
@@ -65,7 +68,7 @@ public class MP_BackgroundService
     String MP_LOG_TAG = "BackgroundService";
     public MP_MediaPlayer mPlayer=null;
     int MPType;
-    public int MPState=0;
+    public int MPState=MP_EMPTY;
     String MPData;
     String SongTitle;
 
@@ -410,20 +413,25 @@ public class MP_BackgroundService
     }
 
     private void getMPData(PlayListInfo playListInfo, int Position) {
-        int length=playListInfo.audioTracks.size();
-        if (Position>length){Position = 0 ;
-            mCurPosition =Position;}
-        MyTrackInfo pti= playListInfo.audioTracks.get(Position);
-        trackInfo = pti;
-        MPData      = pti.getData();
-        SongTitle   = pti.getTitle();
-        MPType      = playListInfo.plType;
-        sharedPreferences.edit()
-                .putInt("lastId",(int)playListInfo.playlistId)
-                .putInt("lastPos", Position)
-                .apply();
-        Log.i(LOG_TAG,"getMPData " + length);
-        Log.i(LOG_TAG,"getMPData " + String.valueOf(mCurPosition));
+        MPType = MP_EMPTY;
+        int length = playListInfo.audioTracks.size();
+        if (length != 0) {
+            if (Position > length) {
+                Position = 0;
+                mCurPosition = Position;
+            }
+            MyTrackInfo pti = playListInfo.audioTracks.get(Position);
+            trackInfo = pti;
+            MPData = pti.getData();
+            SongTitle = pti.getTitle();
+            MPType = playListInfo.plType;
+            sharedPreferences.edit()
+                    .putInt("lastId", (int) playListInfo.playlistId)
+                    .putInt("lastPos", Position)
+                    .apply();
+            Log.i(LOG_TAG, "getMPData " + length);
+            Log.i(LOG_TAG, "getMPData " + String.valueOf(mCurPosition));
+        } else new PopUpToast(context).setMessage("Playlist is empty.");
     }
 
     int currentPlaylistId;
@@ -507,6 +515,8 @@ public class MP_BackgroundService
     public void releaseMediaPlayer() {
         if (mPlayer != null) {
             try {
+//                trackInfo=null;
+//                currentPlaylistId=MP_EMPTY;
                 if(mPlayer.isPlaying()) mPlayer.stop();
                 callback.onStop();
                 mPlayer.reset();
@@ -549,7 +559,6 @@ public class MP_BackgroundService
                         mPlayer.prepare();
                     break;
                 case MP_RADIO:
-//                        uri= Uri.parse(Data);
                         Log.i(LOG_TAG, "prepare Radio");
                         mPlayer.setDataSource(Data);
                         Log.i(LOG_TAG, "prepareAsync");
@@ -579,6 +588,14 @@ public class MP_BackgroundService
                         mPlayer.setOnPreparedListener(listener);
                         mPlayer.prepareAsync();
                     break;
+                default:
+                    MPState=MP_EMPTY;
+                    trackInfo=null;
+                    updateWidgets();
+                    broadcastIntent=new Intent(MP_ERROR);
+                    sendMyBroadcast(broadcastIntent);
+                    break;
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -629,7 +646,8 @@ public class MP_BackgroundService
     private void updateWidgets()
     {
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
-//        Song song = mCurrentSong;
+        if (MPState == Constants.MP_EMPTY)
+            SongTitle = context.getResources().getString(R.string.appwidget_text);
 
         SmallWidget.updateAppWidget(this, manager, SongTitle, MPState);
     }

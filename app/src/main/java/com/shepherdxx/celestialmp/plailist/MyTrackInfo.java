@@ -1,7 +1,12 @@
 package com.shepherdxx.celestialmp.plailist;
 
 import android.media.MediaPlayer;
+import android.provider.MediaStore;
+import android.util.Log;
 
+import com.shepherdxx.celestialmp.medialibrary.MediaLibrary;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,26 +31,36 @@ public class MyTrackInfo {
     // Drawable resource ID
     private int mImageResourceId = NO_IMAGE_PROVAIDED;
     private static final int NO_IMAGE_PROVAIDED = -1;
+    private long audioId;
 
-    public MyTrackInfo(String fileName, String trackName, String Artist, String Album) {
-      this(fileName, trackName, Artist, Album, 0);
-   }
+//    public MyTrackInfo(String fileName, String trackName, String Artist, String Album) {
+//      this(fileName, trackName, Artist, Album, 0);
+//   }
+//
+//    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, int vk_Id){
+//        this.fileName = fileName;
+//        this.trackName=trackName;
+//        this.Artist=Artist;
+//        this.Album=Album;
+//        this.vk_Id=vk_Id;
+//   }
+//
+//    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, long duration){
+//        this.fileName = fileName;
+//        this.trackName=trackName;
+//        this.Artist=Artist;
+//        this.Album=Album;
+//        this.duration=duration;
+//    }
 
-    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, int vk_Id){
-        this.fileName = fileName;
-        this.trackName=trackName;
-        this.Artist=Artist;
-        this.Album=Album;
-        this.vk_Id=vk_Id;
-   }
-
-    public MyTrackInfo(String fileName, String trackName, String Artist, String Album, long duration){
-        this.fileName = fileName;
-        this.trackName=trackName;
-        this.Artist=Artist;
-        this.Album=Album;
-        this.duration=duration;
+    private String shrink(String abc, String artist){
+        return abc
+                .replace(".mp3", "")
+                .replace("_", " ")
+                .replace(artist, "")
+                .replace(" - ", "");
     }
+
    
     public MyTrackInfo(String mRadio, String mDescription, String mUri){
         this.mRadio = mRadio;
@@ -262,6 +277,14 @@ public class MyTrackInfo {
         return duration;
     }
 
+    public long getAudioId() {
+        return audioId;
+    }
+
+    public void setAudioId(long audioId) {
+        this.audioId = audioId;
+    }
+
     /**
      * A dummy item representing a piece of content.
      */
@@ -291,5 +314,39 @@ public class MyTrackInfo {
     public void setPlaylistId(int playlistId) {
         this.playlistId = playlistId;
     }
+
+
+    public MyTrackInfo(String[] projection, long duration, long audioId){
+        this.fileName   = projection[0];
+        this.Artist     = projection[1];
+        this.Album      = projection[2];
+        String name     = shrink(fileName,Artist);
+        if (projection[3]!=null) name = shrink(projection[3],Artist);
+        if (projection[4]!=null) name = projection[4];
+        this.trackName  = name;
+        this.duration   = duration;
+        this.audioId    = audioId;
+    }
+
+    private String toString (String[] projection){
+        String string="";
+        for (String aProjection : projection)
+            string = new StringBuilder()
+                    .append(aProjection)
+                    .append(File.pathSeparator)
+                    .toString();
+        return string;
+    }
+
+
+    public static final String[] FILLED_PROJECTION = {
+            MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.DISPLAY_NAME,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media._ID
+    };
 
 }

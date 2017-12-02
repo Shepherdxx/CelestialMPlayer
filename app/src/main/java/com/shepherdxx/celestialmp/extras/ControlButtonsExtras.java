@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_NEXT_SONG;
 import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_PREV_SONG;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_ERROR;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE;
@@ -193,11 +194,12 @@ public class ControlButtonsExtras implements
             Log.i(Log_Tag, "SongTitle  " + File.pathSeparator + SongTitle);
         }
     }
+
+    public void Title() {Title(null);}
     /**
      * Отображает продолжительность и название песни
      */
-    public void Title() {
-        String SongTitle = " ";
+    public void Title(String SongTitle) {
         long Duration = 0;
         if (currentTrack() != null) {
             SongTitle = currentTrack().getTitle();
@@ -309,6 +311,11 @@ public class ControlButtonsExtras implements
                                 updateUi();
                                 Title();
                                 break;
+                            case MP_ERROR:
+                                visibilityCheck = true;
+                                Title("Choose a song");
+                                updateUi();
+                                break;
                         }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -321,6 +328,7 @@ public class ControlButtonsExtras implements
         intentFilter.addAction(MP_PREPARE);
         intentFilter.addAction(MP_STARTED);
         intentFilter.addAction(MP_STOPED);
+        intentFilter.addAction(MP_ERROR);
         LocalBroadcastManager.getInstance(activity).registerReceiver(MP_start, intentFilter);
     }
 

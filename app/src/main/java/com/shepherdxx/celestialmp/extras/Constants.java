@@ -17,6 +17,7 @@ public final class Constants {
     public static final String MP_PREPARE       ="app.broadCast.MP_PREPARE";
     public static final String MP_STARTED       ="app.broadCast.MP_STARTED";
     public static final String MP_STOPED        ="app.broadCast.MP_STOPED";
+    public static final String MP_ERROR         ="app.broadCast.MP_ERROR";
 
     public static final int SERVICE_DELAY = 6000;
 
@@ -68,6 +69,11 @@ public final class Constants {
     public final static int FILE_NAME_DES=3;
     public final static int FILE_L_M_ASC=4;
     public final static int FILE_L_M__DES=5;
+    public static final Uri
+            PLAYLIST_URI = MediaStore
+                    .Audio
+                    .Playlists
+                    .getContentUri("external");
 
 
     public static String BUNDLE = "Bundle";

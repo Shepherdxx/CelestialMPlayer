@@ -110,11 +110,11 @@ public class B_MainScreen extends AppCompatActivity
         String action = getIntent().getAction();
             switch (action){
                 case ACTION_RESUME:
-                    int id;
+                    int id=R.id.player_activity;
+                    if (curTrackInfo()== null)id=R.id.player_playlist;
                     if (curTrackInfo() != null &&
                             curTrackInfo().getPlaylistId()==Constants.PLAYLIST_RADIO)
                         id=R.id.radio_activity;
-                    else id=R.id.player_activity;
                     checkedFragment(id);
                     navViewCheckedItem();
                     break;

@@ -1,4 +1,4 @@
-package com.shepherdxx.celestialmp.playlist_imp;
+package com.shepherdxx.celestialmp.plailist;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,9 +9,6 @@ import android.util.Log;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.medialibrary.MediaLibrary;
-import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
-
-import java.io.File;
 
 /**
  * Created by Shepherdxx on 08.11.2017.
@@ -88,7 +85,7 @@ public class QueryTask {
 
     public static QueryTask queryTask(){
         return new QueryTask(null,null,null,null,null);}
-    public Cursor audioId(Context context, int playlistId) {
+    public Cursor playlistSummary(Context context, int playlistId) {
         final String[] projection = { "*" };
         String selection= Constants.PLAYLIST_ID+"=" + playlistId;
         Uri uri = pl_check();

@@ -23,13 +23,13 @@ public class SmallWidget extends AppWidgetProvider {
         // There may be multiple widgets active, so update all of them
 
 //        Song song = null;
-        String songName= "";
-        int state = 0;
+        String songName= context.getResources().getString(R.string.appwidget_text);
+        int state = Constants.MP_EMPTY;
 
         if (MP_BackgroundService.hasInstance()) {
             MP_BackgroundService service = MP_BackgroundService.get(context);
-            songName = service.SongTitle;
             state = service.MPState;
+            songName = service.SongTitle;
             Log.i("SmallWidget", songName + " " + state);
         }
 

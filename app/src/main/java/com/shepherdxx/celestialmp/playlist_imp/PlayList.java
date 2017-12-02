@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.medialibrary.MediaLibrary;
-import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
+import com.shepherdxx.celestialmp.plailist.QueryTask;
 import com.shepherdxx.celestialmp.plailist.Song;
 
 import java.util.ArrayList;
@@ -193,78 +193,7 @@ public class PlayList {
         return found;
     }
 
-    //////
-    /////  //    //   //////
-    //      //  //    //   //
-    ////      //      //////
-    //      //  //    //
-    ////  //      //  //
 
-
-//
-//
-//    public void addTrackToPlaylist(Context context, String audio_id,
-//                                   long playlist_id, int pos) {
-//        Uri newuri = MediaStore.Audio.Playlists.Members.getContentUri(
-//                "external", playlist_id);
-//        ContentResolver resolver = context.getContentResolver();
-//        ContentValues values = new ContentValues();
-//        values.put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, pos);
-//        values.put(MediaStore.Audio.Playlists.Members.AUDIO_ID, audio_id);
-//        values.put(MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
-//                playlist_id);
-//        resolver.insert(newuri, values);
-//    }
-//
-//
-
-//
-////    private void oip(){
-////    Cursor cursor = plist.getPlaylistTracks(getActivity(), playlist_id);
-////    // replace with your own method to get cursor
-////    ArrayList<String> audio_ids = new ArrayList<String>();
-////
-////    // build up the array with audio_id's
-////    int i = 0;
-////    if (cursor != null && cursor.moveToFirst()) {
-////        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-////            String audio_id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID));
-////            audio_ids.add(audio_id);
-////        }}}
-////
-////
-////
-////    public void PlaySongsFromAPlaylist(int playListID){
-////
-////        String[] ARG_STRING = {MediaStore.Audio.Media._ID,
-////                MediaStore.Audio.Media.DATA,
-////                MediaStore.Audio.Media.DISPLAY_NAME,
-////                MediaStore.Video.Media.SIZE,
-////                android.provider.MediaStore.MediaColumns.DATA};
-////        Uri membersUri = MediaStore.Audio.Playlists.Members.getContentUri("external", playListID);
-////        Cursor songsWithingAPlayList = mThis.managedQuery(membersUri, ARG_STRING, null, null, null);
-////        int theSongIDIwantToPlay = 0; // PLAYING FROM THE FIRST SONG
-////        if(songsWithingAPlayList != null)
-////        {
-////            songsWithingAPlayList.moveToPosition(theSongIDIwantToPlay);
-////            String DataStream = songsWithingAPlayList.getString(4);
-////            PlayMusic(DataStream);
-////            songsWithingAPlayList.close();
-////        }
-////    }
-//
-////    public static void PlayMusic(String DataStream){
-////        MediaPlayer mpObject = new MediaPlayer();
-////        if(DataStream == null)
-////            return;
-////        try {
-////            mpObject.setDataSource(DataStream);
-////            mpObject.prepare();
-////            mpObject.start();
-////        } catch (Exception e) {
-////            e.printStackTrace();
-////        }
-////    }
 
 
 }
