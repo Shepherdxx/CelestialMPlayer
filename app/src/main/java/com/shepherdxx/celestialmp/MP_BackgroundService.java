@@ -2,6 +2,7 @@ package com.shepherdxx.celestialmp;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +11,19 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,7 +35,10 @@ import com.shepherdxx.celestialmp.plailist.PlayListTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static android.widget.Toast.makeText;
 import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
@@ -47,6 +56,8 @@ import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STOPED;
+import static com.shepherdxx.celestialmp.plailist.RadioBD.SEARCH_QUERY_URL_EXTRA;
+import static com.shepherdxx.celestialmp.plailist.RadioBD.getResponseFromHttpUrl;
 
 
 public class MP_BackgroundService
@@ -243,7 +254,18 @@ public class MP_BackgroundService
         }
     }
 
-//    ConnectivityManager cm;
+    private boolean conectionCheck() {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isConnected=false;
+        try {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork.isConnectedOrConnecting();
+        }catch (NullPointerException e){e.printStackTrace();
+        }finally {
+            if (!isConnected) toastMessage("Some Problem");
+        }return isConnected;
+    }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
@@ -289,8 +311,7 @@ public class MP_BackgroundService
                                 new PopUpToast(context).setMessage("audioTracks not found");
                                 break;
                             }
-                            getMPData(playListInfo, mCurPosition);
-                            Create(MPType, MPData, this);
+                            Create(playListInfo, mCurPosition, this);
                             break;
                     }
             }
@@ -373,8 +394,7 @@ public class MP_BackgroundService
         PlayListInfo playListInfo=curPlaylist();
         boolean b = (mPlayer.isPlaying());
         OnPreparedListener onPreparedListener = deltaCheck(PREV_SONG)&b? this:null;
-        getMPData(playListInfo,deltaChange(PREV_SONG));
-        Create(MPType,MPData, onPreparedListener);
+        Create(playListInfo, deltaChange(PREV_SONG), onPreparedListener);
     }
 
     private void NextSong() {
@@ -382,8 +402,7 @@ public class MP_BackgroundService
         boolean b = (mPlayer.isPlaying());
         OnPreparedListener onPreparedListener = deltaCheck(NEXT_SONG)&b? this:null;
         Log.i(LOG_TAG,"deltaCheck " + File.pathSeparator + deltaCheck(NEXT_SONG));
-        getMPData(playListInfo,deltaChange(NEXT_SONG));
-        Create(MPType,MPData, onPreparedListener);
+        Create(playListInfo, deltaChange(NEXT_SONG), onPreparedListener);
     }
 
     private int deltaChange(int delta){
@@ -500,10 +519,15 @@ public class MP_BackgroundService
             }
             Log.d("sender", "Broadcasting message");
             sendMyBroadcast(broadcastIntent);
-        }else {if(ResumeState){getMPData(gainPlaylist(-1), mCurPosition);
-            Create(MPType,MPData, null);mPlayer.seekTo((int)startTimeBefore);onAir();}}
+        } else {
+            if (ResumeState) {
+                Create(gainPlaylist(-1), mCurPosition, null);
+                mPlayer.seekTo((int) startTimeBefore);
+                onAir();
+            }
+        }
         assert mPlayer != null;
-        MPState=getState();
+        MPState = getState();
         updateWidgets();
     }
 
@@ -545,54 +569,65 @@ public class MP_BackgroundService
             .getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
             + File.separator;
 
-    public void Create(int mpType, String Data, OnPreparedListener listener){
+    public void Create(PlayListInfo playListInfo, int Position, OnPreparedListener listener) {
+        getMPData(playListInfo, Position);
+        int mpType=MPType;
+        String Data=MPData;
         releaseMediaPlayer();
         Uri uri;
-        try {mPlayer = MP_MediaPlayer.newPlayer();
+        try {
+            mPlayer = MP_MediaPlayer.newPlayer();
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            switch (mpType){
+            switch (mpType) {
                 case MP_RAW:
-                    uri= Uri.parse(String.format("android.resource://%s/%s",context.getPackageName(),Data));
-                        Log.i(LOG_TAG, "prepare Raw " + uri);
-                        mPlayer.setDataSource(context, uri);
-                        mPlayer.setOnPreparedListener(listener);
-                        mPlayer.prepare();
+                    uri = Uri.parse(String.format("android.resource://%s/%s", context.getPackageName(), Data));
+                    Log.i(LOG_TAG, "prepare Raw " + uri);
+                    mPlayer.setDataSource(context, uri);
+                    mPlayer.setOnPreparedListener(listener);
+                    mPlayer.prepare();
                     break;
                 case MP_RADIO:
-                        Log.i(LOG_TAG, "prepare Radio");
-                        mPlayer.setDataSource(Data);
-                        Log.i(LOG_TAG, "prepareAsync");
-                        mPlayer.setOnPreparedListener(listener);
+                    Log.i(LOG_TAG, "prepare Radio");
+                    mPlayer.setDataSource(Data);
+                    Log.i(LOG_TAG, "prepareAsync");
+                    mPlayer.setOnPreparedListener(listener);
+                    if (conectionCheck()){
+                        Intent intent= new Intent(context,LoaderActivity.class);
+                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         mPlayer.prepareAsync();
-                        broadcastIntent=new Intent(MP_PREPARE_RADIO);
-                        sendMyBroadcast(broadcastIntent);
+                    }
+                    broadcastIntent = new Intent(MP_PREPARE_RADIO);
+                    sendMyBroadcast(broadcastIntent);
                     break;
                 case MP_SD:
-                        Data=DATA_SD+Data;
-                        Log.i(LOG_TAG, "prepare SD" + File.pathSeparator + Data);
-                        mPlayer.setDataSource(Data);
-                        mPlayer.prepare();
+                    Data = DATA_SD + Data;
+                    Log.i(LOG_TAG, "prepare SD" + File.pathSeparator + Data);
+                    mPlayer.setDataSource(Data);
+                    mPlayer.prepare();
                     break;
                 case MP_SD_U:
-                        Log.i(LOG_TAG, "prepare SD_U" + File.pathSeparator + Data);
-                        mPlayer.setDataSource(Data);
-                        if (listener!=null){mPlayer.setOnPreparedListener(listener);}
-                        mPlayer.prepare();
-                        broadcastIntent=new Intent(MP_PREPARE);
-                        sendMyBroadcast(broadcastIntent);
+                    Log.i(LOG_TAG, "prepare SD_U" + File.pathSeparator + Data);
+                    mPlayer.setDataSource(Data);
+                    if (listener != null) {
+                        mPlayer.setOnPreparedListener(listener);
+                    }
+                    mPlayer.prepare();
+                    broadcastIntent = new Intent(MP_PREPARE);
+                    sendMyBroadcast(broadcastIntent);
                     break;
                 case MP_HTTP:
-                        Log.i(LOG_TAG, "prepare HTTP");
-                        mPlayer.setDataSource(Data);
-                        Log.i(LOG_TAG, "prepareAsync");
-                        mPlayer.setOnPreparedListener(listener);
-                        mPlayer.prepareAsync();
+                    Log.i(LOG_TAG, "prepare HTTP");
+                    mPlayer.setDataSource(Data);
+                    Log.i(LOG_TAG, "prepareAsync");
+                    mPlayer.setOnPreparedListener(listener);
+                    mPlayer.prepareAsync();
                     break;
                 default:
-                    MPState=MP_EMPTY;
-                    trackInfo=null;
+                    MPState = MP_EMPTY;
+                    trackInfo = null;
                     updateWidgets();
-                    broadcastIntent=new Intent(MP_ERROR);
+                    broadcastIntent = new Intent(MP_ERROR);
                     sendMyBroadcast(broadcastIntent);
                     break;
 
@@ -692,4 +727,11 @@ public class MP_BackgroundService
         if (mPlayer.isPlaying())state=1;
         return state;
     }
+
+    //
+    //
+    String textInfo;
+
+
+
 }

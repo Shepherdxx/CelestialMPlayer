@@ -203,24 +203,7 @@ public class RadioBD {
 //        mRadioList.setAdapter(mAdapter);
 //        mAdapter.setmOnViewClicklListener(this);
 //
-    public Intent RadioIntent(int mCurCheckPosition){
-        RadioPlayListCreation();
-        intent = new Intent(mActivity, MP_BackgroundService.class);
-        Bondiana = new Bundle();
-        Bondiana.putInt("MPType", MPType);
-        Bondiana.putInt("MPState",MP_PLAY);
-        Bondiana.putInt("MPData",mCurCheckPosition);
-        Bondiana.putStringArray("SongPath", RadioPath);
-        Bondiana.putStringArray("SongTitle", songTitle);
-        intent.putExtra(BUNDLE,Bondiana);
-        return intent;
-    }
 
-    public Intent RadioIntent(){
-        return RadioIntent(mCurCheckPosition);
-    }
-
-    private PlayListInfo playListInfo;
     //создание плейлиста
     private void RadioPlayListCreation() {
 //        playListInfo = new PlayListInfo(PLAYLIST_RADIO,_PLAYLIST_RADIO);
@@ -288,28 +271,26 @@ public class RadioBD {
         RadioPlayListCreation();
         return RadioList;
     }
-//
-//
-//        @Override
-//        public void onItemClick (ImageView im, View v, MusicScroll obj,int position){
-//            ConnectivityManager cm =
-//                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//            try {
-//                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-//                boolean isConnected = activeNetwork.isConnectedOrConnecting();
-//                if (isConnected) {
-//                    mCurCheckPosition = position;
-//                    Log.i("onItemClick", "received");
-//                    Bondiana.putInt("MPData", mCurCheckPosition);
-//                    MPState = MP_PLAY;
-//                    Bondiana.putInt("MPState", MPState);
-//                    intent.putExtra("Bundle", Bondiana);
-//                    startService(intent);
+
+//    String textInfo;
+//    void reqText(String key){
+//        textInfo =null;
+//        switch(key){
+//            case "http://air2.radiorecord.ru:805/rock_320" :
+//                String URI_S="http://www.radiorecord.ru/xml/rock_online_v8.txt";
+//                Uri uri = Uri.parse(URI_S);
+//                try {
+//                    URL radioSearch = new URL(URI_S);
+//                    String searchResults = getResponseFromHttpUrl(radioSearch);
+//                    textInfo=searchResults;
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
 //                }
-//            } catch (NullPointerException e) {
-//                Toast.makeText(this, ERROR, Toast.LENGTH_SHORT).show();
-//            }
+//            break;
 //        }
+//    }
 //
 //        @Override
 //        public Loader<String> onCreateLoader ( int id, final Bundle args){

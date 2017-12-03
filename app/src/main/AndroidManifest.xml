@@ -57,8 +57,8 @@
 
         <activity
             android:name=".PreService"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity android:name=".LoaderActivity"></activity>
     </application>
 
 </manifest>
