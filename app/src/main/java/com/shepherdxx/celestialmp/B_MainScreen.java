@@ -383,7 +383,6 @@ public class B_MainScreen extends AppCompatActivity
 
     @Override
     public void onTrackClick(MyTrackInfo item, int position) {
-        if (checkConnection()) {
             toolbar.setTitle(item.getmRadio());
             int id = item.getPlaylistId();
             startService(
@@ -392,7 +391,6 @@ public class B_MainScreen extends AppCompatActivity
                             position)
             );
         }
-    }
 
     PopUpToast toast=null;
     @Override
