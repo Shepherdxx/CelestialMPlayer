@@ -263,7 +263,8 @@ public class MP_BackgroundService
             isConnected = activeNetwork.isConnectedOrConnecting();
         }catch (NullPointerException e){e.printStackTrace();
         }finally {
-            if (!isConnected) toastMessage("Some Problem");
+            if (!isConnected) toastMessage(Constants.iERROR);
+            Log.i("MP_BG_service", "checkConnection " + isConnected);
         }return isConnected;
     }
 
@@ -308,7 +309,7 @@ public class MP_BackgroundService
                             Log.i(LOG_TAG, ACTION_PLAY + " " + currentPlaylistId + " MPData " + mCurPosition);
                             playListInfo = gainPlaylist(currentPlaylistId);
                             if (playListInfo == null) {
-                                new PopUpToast(context).setMessage("audioTracks not found");
+                                toastMessage("audioTracks not found");
                                 break;
                             }
                             Create(playListInfo, mCurPosition, this);
@@ -450,7 +451,7 @@ public class MP_BackgroundService
                     .apply();
             Log.i(LOG_TAG, "getMPData " + length);
             Log.i(LOG_TAG, "getMPData " + String.valueOf(mCurPosition));
-        } else new PopUpToast(context).setMessage("Playlist is empty.");
+        } else toastMessage("Playlist is empty.");
     }
 
     int currentPlaylistId;
@@ -557,8 +558,9 @@ public class MP_BackgroundService
     private PopUpToast toast;
         //Всплывающие сообщения
         void toastMessage(String cToast) {
+        if (toast==null)
             toast=new PopUpToast(context);
-            toast.setMessage(cToast);
+            toast.setMessage(cToast);}
         }
         void toastMessage() {
             toast.cancel();
