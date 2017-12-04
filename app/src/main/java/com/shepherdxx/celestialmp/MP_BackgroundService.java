@@ -171,17 +171,18 @@ public class MP_BackgroundService
                switch (intent.getAction()){
                    case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
                        //pause the music
-                       makeText(context, "Слышь! Уши подбери!", Toast.LENGTH_LONG).show();
+                       toastMessage("Слышь! Уши подбери!");
                        if(MPState==MP_PLAY){
                            onAir();
                            ResumeState=true;
                            wasReceive=true;}
                        break;
                    case android.media.AudioManager.ACTION_HEADSET_PLUG:
-                       if(intent.getIntExtra("state",0)==1&&wasReceive){
+                   MPState = getState();
+                   if (MPState==0&&wasReceive){
                            wasReceive=false;
-                           makeText(context, "Ухи подобраны!", Toast.LENGTH_LONG).show();
-                           if(ResumeState)onAir();}
+                           toastMessage("Ухи подобраны!");
+                           onAir();}
                        break;
                }
            }
