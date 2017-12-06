@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.shepherdxx.celestialmp.MP_BackgroundService;
+import com.shepherdxx.celestialmp.MP_BG_Service;
 import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
@@ -23,8 +23,7 @@ import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_NEXT_SONG;
-import static com.shepherdxx.celestialmp.MP_BackgroundService.ACTION_PREV_SONG;
+import static com.shepherdxx.celestialmp.MP_BG_Service.ACTION_NEXT_SONG;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_ERROR;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
@@ -92,12 +91,12 @@ public class ControlButtonsExtras implements
 //        return new ControlButtonsExtras(activity,myHandler,btPlay,seekBar,fTime,null,null);
 //    }
 
-    private MP_BackgroundService serviceOn = null;
+    private MP_BG_Service serviceOn = null;
 
     private MyTrackInfo currentTrack() {
         MyTrackInfo track = null;
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(activity);
+        if (MP_BG_Service.hasInstance()) {
+            MP_BG_Service service = MP_BG_Service.get(activity);
             track = service.getTrackInfo();
             serviceOn = service;
         }
@@ -141,8 +140,6 @@ public class ControlButtonsExtras implements
     @Override
     public void run() {
         updateUi();
-
-
         if (Build.VERSION.SDK_INT >= 21) {
             if (!activity.requestVisibleBehind(true)) myHandler.removeCallbacks(this);
             else myHandler.postDelayed(this, 500);
@@ -158,22 +155,22 @@ public class ControlButtonsExtras implements
         if (currentTrack() != null) {
             switch (v.getId()) {
                 case R.id.fr_pausePlay:
-                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
+                    action = MP_BG_Service.ACTION_TOGGLE_PLAYBACK;
                     break;
                 case R.id.fr_forward:
-                    action = MP_BackgroundService.ACTION_FORWARD;
+                    action = MP_BG_Service.ACTION_FORWARD;
                     break;
                 case R.id.fr_toward:
-                    action = MP_BackgroundService.ACTION_TOWARD;
+                    action = MP_BG_Service.ACTION_TOWARD;
                     break;
                 case R.id.fr_next_song:
                     action = ACTION_NEXT_SONG;
                     break;
                 case R.id.fr_back_song:
-                    action = MP_BackgroundService.ACTION_PREV_SONG;
+                    action = MP_BG_Service.ACTION_PREV_SONG;
                     break;
                 default:
-                    action = MP_BackgroundService.ACTION_TOGGLE_PLAYBACK;
+                    action = MP_BG_Service.ACTION_TOGGLE_PLAYBACK;
             }
             activity.startService(
                     PreService.controlBGService(activity, action));

@@ -72,9 +72,11 @@ public class QueryTask {
     }
 
     private Uri SD_check(){
-        if (Environment.getExternalStorageDirectory().exists())
-            return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        return  MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
+       return MediaStore.Audio.Media.
+               getContentUriForPath(Environment.getExternalStorageDirectory().getPath());
+//        if (Environment.getExternalStorageDirectory().exists())
+//            return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//        return  MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
     }
 
     private Uri pl_check(){

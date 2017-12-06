@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,20 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.shepherdxx.celestialmp.PreService;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.Constants;
+import com.shepherdxx.celestialmp.extras.Debug;
 import com.shepherdxx.celestialmp.extras.FragmentListener;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter;
 import com.shepherdxx.celestialmp.plailist.MyPlayListAdapter.OnViewClickListener;
 import com.shepherdxx.celestialmp.plailist.PlayListInfo;
 import com.shepherdxx.celestialmp.plailist.PlayListTrue;
-import com.shepherdxx.celestialmp.playlist_imp.PlayList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -126,6 +127,12 @@ public class StartFragment
                 d.show();
             }
         });
+
+        mainView.findViewById(R.id.button_current).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(activity, Debug.class));
+            }});
         try {activity=getActivity();
             findView(mainView);
         }catch (IllegalArgumentException e){e.printStackTrace();}
@@ -169,7 +176,6 @@ public class StartFragment
      * Список плейлистов
      */
     ListView plScroll;
-    ArrayAdapter plAdapter;
     ArrayList<PlayListInfo> infoList=new ArrayList<>();
     MyPlayListAdapter myPlayListAdapter;
     void findView(View v){
@@ -223,28 +229,37 @@ public class StartFragment
         return (hash < 0 ? hash*-1 : hash);
     }
 
-    Uri uri= MediaStore.Audio.Playlists.getContentUri("external");
+
     public void addNewPlaylist(String newPlaylist) {
         ContentResolver resolver = getContext().getContentResolver();
         ContentValues values = new ContentValues(1);
         values.put(MediaStore.Audio.Playlists.NAME, newPlaylist);
         values.put(MediaStore.Audio.Playlists._ID, hash63(newPlaylist));
         Log.i("HashTitle"," " + hash63(newPlaylist));
-        resolver.insert(uri, values);
+        resolver.insert(Constants.PLAYLIST_URI, values);
     }
 
     public void getAndroidPlaylist(ArrayList<PlayListInfo> PLI) {
-        Cursor cursor = PlayListTrue.getAndroidPlaylistCursor(getContext(), Constants.PLAYLIST_URI);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            do{
-                long id = cursor.getLong(0);
-                String name = cursor.getString(1);
-                Log.i("getAndroidPlaylist", name + File.pathSeparator + id);
-                PlayListInfo playListInfo = new PlayListInfo(id, name);
-                PLI.add(playListInfo);
-            } while (cursor.moveToNext());
-            cursor.close();
+        try {Cursor cursor = PlayListTrue.getAndroidPlaylistCursor(getContext(), Constants.PLAYLIST_URI);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                try {
+                    do {
+                        long id = cursor.getLong(0);
+                        String name = cursor.getString(1);
+                        Log.i("getAndroidPlaylist", name + File.pathSeparator + id);
+                        PlayListInfo playListInfo = new PlayListInfo(id, name);
+                        PLI.add(playListInfo);
+                    } while (cursor.moveToNext());
+                    cursor.close();
+                } catch (CursorIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    Log.i(Log_tag, "getAndroidPlaylist failed");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            new PopUpToast(activity).setMessage("Диман поменяй телефон");
         }
     }
 

@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.shepherdxx.celestialmp.MP_BackgroundService;
+import com.shepherdxx.celestialmp.MP_BG_Service;
 import com.shepherdxx.celestialmp.R;
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.FragmentListener;
@@ -26,7 +26,6 @@ import com.shepherdxx.celestialmp.plailist.MyTrackInfo;
 import java.util.ArrayList;
 
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_STOPED;
 
 /**
  * A fragment representing a list of Items.
@@ -144,8 +143,8 @@ public class Fragment_Playlist extends Fragment {
 
     private MyTrackInfo currentTrackInfo() {
         MyTrackInfo track = null;
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(getContext());
+        if (MP_BG_Service.hasInstance()) {
+            MP_BG_Service service = MP_BG_Service.get(getContext());
             track = service.getTrackInfo();
         }
         return track;
@@ -153,8 +152,8 @@ public class Fragment_Playlist extends Fragment {
 
     private int currentTrackPos() {
         int position = 0;
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(getContext());
+        if (MP_BG_Service.hasInstance()) {
+            MP_BG_Service service = MP_BG_Service.get(getContext());
             position = service.getmCurPosition();
         }
         return position;

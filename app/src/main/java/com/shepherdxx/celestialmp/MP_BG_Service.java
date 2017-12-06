@@ -2,7 +2,6 @@ package com.shepherdxx.celestialmp;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
-import android.content.AsyncTaskLoader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,18 +13,14 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
@@ -35,18 +30,15 @@ import com.shepherdxx.celestialmp.plailist.PlayListTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.widget.Toast.makeText;
-import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
 import static com.shepherdxx.celestialmp.extras.Constants.DEFAULT_R_M;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_EMPTY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_ERROR;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_HTTP;
+import static com.shepherdxx.celestialmp.extras.Constants.MP_PAUSE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_PREPARE_RADIO;
@@ -56,11 +48,9 @@ import static com.shepherdxx.celestialmp.extras.Constants.MP_SD;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_SD_U;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STARTED;
 import static com.shepherdxx.celestialmp.extras.Constants.MP_STOPED;
-import static com.shepherdxx.celestialmp.plailist.RadioBD.SEARCH_QUERY_URL_EXTRA;
-import static com.shepherdxx.celestialmp.plailist.RadioBD.getResponseFromHttpUrl;
 
 
-public class MP_BackgroundService
+public class MP_BG_Service
         extends Service
         implements MediaPlayer.OnCompletionListener
         ,SharedPreferences.OnSharedPreferenceChangeListener
@@ -98,7 +88,7 @@ public class MP_BackgroundService
     public String VOLUME;
     //обозначение AudioManager
     private AudioManager am;
-    boolean mAudioFocusGranted;
+//    boolean mAudioFocusGranted;
 
     private void setup_sPref(){
         sharedPreferences = getDefaultSharedPreferences(this);
@@ -162,55 +152,73 @@ public class MP_BackgroundService
     public IBinder onBind(Intent intent) {
         return null;
     }
-    boolean wasReceive=false;
+    //Постановка на паузу не юзером
+    boolean tempoPause =false;
 
    private void setBroadcastReceiver(){
        mNoiseReceiver = new BroadcastReceiver() {
            @Override
            public void onReceive(Context context, Intent intent) {
-               switch (intent.getAction()){
-                   case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
-                       //pause the music
-                       toastMessage("Слышь! Уши подбери!");
-                       if(MPState==MP_PLAY){
-                           onAir();
-                           ResumeState=true;
-                           wasReceive=true;}
-                       break;
-                   case android.media.AudioManager.ACTION_HEADSET_PLUG:
-                   MPState = getState();
-                   if (MPState==0&&wasReceive){
-                           wasReceive=false;
-                           toastMessage("Ухи подобраны!");
-                           onAir();}
-                       break;
+               int state= getState();
+               String action=intent.getAction();
+               if (action != null) {
+                   switch (action){
+                       case AudioManager.ACTION_AUDIO_BECOMING_NOISY:
+                           Log.i(LOG_TAG, "onReceive BECOMING_NOISY");
+                           //pause the music
+                           if(state==MP_PLAY){
+                               Log.i(LOG_TAG, "BECOMING_NOISY активирован");
+                               tempoPause =true;
+                               onAir();
+                               toastMessage("Гарнитура отключена");
+                               beNoisy =true;
+                           }
+                           break;
+                       case AudioManager.ACTION_HEADSET_PLUG:
+                           int plug = intent.getIntExtra("state", 0);
+                           if (plug == 1) {
+                               Log.i(LOG_TAG, "onReceive HEADSET_PLUG");
+                               if (!mPause && beNoisy) {
+                                   Log.i(LOG_TAG, "HEADSET_PLUG активирован");
+                                   onAir();
+                                   toastMessage("Гарнитура на месте, продолжаем");
+                               }
+                           }
+                           break;
+                   }
                }
            }
        };
        //on Play
        nF = new IntentFilter();
        nF.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-       nF.addAction(AudioManager.ACTION_HEADSET_PLUG);
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+           nF.addAction(AudioManager.ACTION_HEADSET_PLUG);
+       }
        registerReceiver(mNoiseReceiver, nF);
    }
-    private MediaSessionCompat.Callback callback;
 
-    private void registerCallback(){ callback= new MediaSessionCompat.Callback() {
-        @Override
-        public void onPlay() {
-            mPlayer.start();
-            registerReceiver(mNoiseReceiver, nF);
-        }
+    private String LOG_TAG= MP_BG_Service.class.getSimpleName();
 
-        @Override
-        public void onStop() {
-            MPState=getState();
-            updateWidgets();
-            mNoiseReceiver.clearAbortBroadcast();
-            unregisterReceiver(mNoiseReceiver);
-        }
-    };}
+    private void mpStop(){
+        startTimeBefore=mPlayer.getCurrentPosition();
+        if(mStop) mPlayer.stop();
+        if(tempoPause || mPause) mPlayer.pause();
+        MPState=getState();
+        updateWidgets();
+        sendMyBroadcast(new Intent(MP_STOPED));
+    }
+   private void mpStart(){
+       mPlayer.start();
+       tempoPause =false;
+       mStop=false;
+       MPState = getState();
+       updateWidgets();
+       sendMyBroadcast(new Intent(MP_STARTED));
+   }
 
+    boolean mStop=false;
+    boolean mPause=false;
 
     @Override
     public void onCreate() {
@@ -221,8 +229,6 @@ public class MP_BackgroundService
 
         //остановка музыки когда выпал наушник
         setBroadcastReceiver();
-        registerCallback();
-
 
         initWidgets();
         sInstance = this;
@@ -232,6 +238,7 @@ public class MP_BackgroundService
                 currentPlaylistId = sharedPreferences.getInt("lastId", -1);
             }
             sWait.notifyAll();}
+
     }
 
     //TODO 1:
@@ -244,18 +251,20 @@ public class MP_BackgroundService
                 AudioManager.AUDIOFOCUS_GAIN);
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            mAudioFocusGranted = true;
-            callback.onPlay();
-            ResumeState=false;
-            broadcastIntent = new Intent(MP_STARTED);
+//            mAudioFocusGranted = true;
+            Log.i(LOG_TAG, "AUDIOFOCUS_REQUEST_GRANTED");
+            mpStart();
+            beNoisy =false;
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-            mAudioFocusGranted = false;
+//            mAudioFocusGranted = false;
+            tempoPause =true;
+            mpStop();
+            Log.i(LOG_TAG, "AUDIOFOCUS_REQUEST_FAILED");
             toastMessage("Some Problem");
-            // take appropriate action
         }
     }
 
-    private boolean conectionCheck() {
+    private boolean connectionCheck() {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean isConnected=false;
@@ -285,6 +294,8 @@ public class MP_BackgroundService
                         if (mPlayer.isPlaying()) onAir();
                         break;
                     case ACTION_TOGGLE_PLAYBACK:
+                        if (isOnAir())mPause=true;
+                        else mPause=false;
                         onAir();
                         break;
                     case ACTION_FORWARD:
@@ -340,9 +351,6 @@ public class MP_BackgroundService
         // закрываем проигрыватель
         releaseMediaPlayer();
 
-        // дерегистрируем (выключаем) BroadcastReceiver
-        unregisterReceiver(mNoiseReceiver);
-
         // Unregister OnPreferenceChangedListener to avoid any memory leaks.
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
@@ -357,12 +365,12 @@ public class MP_BackgroundService
         Log.i("onAudioFocusChange",String.valueOf(focusChange));
         switch (focusChange){
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                Log.i("onAudioFocusChange","AUDIOFOCUS_LOSS_TRANSIENT");
-                ResumeState=true;
+                Log.i(LOG_TAG,"AUDIO_FOCUS_LOSS_TRANSIENT");
+                tempoPause=true;
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                Log.i("onAudioFocusChange","AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-                ResumeState=true;
+                Log.i(LOG_TAG,"AUDIO_FOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                tempoPause=true;
                 // The AUDIOFOCUS_LOSS_TRANSIENT case means that we've lost audio focus for a
                 // short amount of time. The AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK case means that
                 // our app is allowed to continue playing sound but at a lower volume. We'll treat
@@ -370,17 +378,15 @@ public class MP_BackgroundService
                 break;
             case AudioManager.AUDIOFOCUS_GAIN:
                 // The AUDIOFOCUS_GAIN case means we have regained focus and can resume playback.
-                Log.i("onAudioFocusChange","AUDIOFOCUS_GAIN");
-                if(ResumeState&!isOnAir()){onAir();
-                    ResumeState=false;}
+                Log.i(LOG_TAG,"AUDIO_FOCUS_GAIN");
+                if(tempoPause&!mPause)onAir();
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
-                Log.i("onAudioFocusChange","AUDIOFOCUS_LOSS");
-                if(isOnAir()){onAir();
-                    ResumeState=true;}
+                Log.i(LOG_TAG,"AUDIO_FOCUS_LOSS");
+                tempoPause=true;
+                if (isOnAir())onAir();
                 // The AUDIOFOCUS_LOSS case means we've lost audio focus and
-                // Stop playback and clean up resources
-//                releaseMediaPlayer();
+                // Stop playback
                 break;
         }
     }
@@ -446,8 +452,14 @@ public class MP_BackgroundService
             MPData = pti.getData();
             SongTitle = pti.getTitle();
             MPType = playListInfo.plType;
+            int id = (int) playListInfo.playlistId;
+            if (id!=Constants.PLAYLIST_RADIO){
+                sharedPreferences.edit()
+                        .putInt("last_MP_SD_U_Id", id)
+                        .putInt("last_MP_SD_U_Pos", Position)
+                        .apply();}
             sharedPreferences.edit()
-                    .putInt("lastId", (int) playListInfo.playlistId)
+                    .putInt("lastId", id)
                     .putInt("lastPos", Position)
                     .apply();
             Log.i(LOG_TAG, "getMPData " + length);
@@ -494,57 +506,47 @@ public class MP_BackgroundService
         }
     }
 
-    boolean ResumeState;
+    boolean beNoisy =false;
     long startTimeBefore;
-    Intent broadcastIntent;
 
     private boolean isOnAir() {
         boolean b=false;
-        if (mPlayer != null) {
-            b = mPlayer.isPlaying();
-        }return b;
+        if (getState()==1) b = true;
+        return b;
     }
     //Старт/Пауза плеера.
     public void onAir() {
         if (mPlayer != null) {
             if (!isOnAir()) {
-                Log.e(MP_LOG_TAG, "onAir"+"Player status " + String.valueOf(isOnAir()));
                 reqAudioFocus();
                 if (MPType!=MP_RADIO){mPlayer.setOnCompletionListener(this);}
+                Log.i(LOG_TAG,"ON_AIR");
             }else{
-                callback.onStop();
-                Log.e("offAir", "Player status" + String.valueOf(isOnAir()));
-                mPlayer.pause();
-                startTimeBefore=mPlayer.getCurrentPosition();
-                ResumeState=true;
-                broadcastIntent =new Intent(MP_STOPED);
+                mpStop();
+                Log.i(LOG_TAG,"OFF_AIR");
             }
-            Log.d("sender", "Broadcasting message");
-            sendMyBroadcast(broadcastIntent);
         } else {
-            if (ResumeState) {
-                Create(gainPlaylist(-1), mCurPosition, null);
-                mPlayer.seekTo((int) startTimeBefore);
-                onAir();
+//            if (beNoisy) {
+//                Create(gainPlaylist(-1), mCurPosition, null);
+//                mPlayer.seekTo((int) startTimeBefore);
+//                onAir();
+                Log.e(LOG_TAG, "onAir"+"плеер пересоздан");
             }
-        }
-        assert mPlayer != null;
-        MPState = getState();
-        updateWidgets();
+//        }
     }
 
     public void sendMyBroadcast(Intent i) {
+        Log.i(LOG_TAG, "Broadcasting message");
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
     }
 
     //Сброс проигрывателя
     public void releaseMediaPlayer() {
         if (mPlayer != null) {
+            // дерегистрируем (выключаем) BroadcastReceiver
+            unregisterReceiver(mNoiseReceiver);
             try {
-//                trackInfo=null;
-//                currentPlaylistId=MP_EMPTY;
-                if(mPlayer.isPlaying()) mPlayer.stop();
-                callback.onStop();
+                stopPlayer();
                 mPlayer.reset();
                 mPlayer.release();
                 // Set the media Player back to null.
@@ -556,13 +558,17 @@ public class MP_BackgroundService
         }
     }
 
+    private void stopPlayer(){
+        mStop=true;
+        mpStop();}
+
     private PopUpToast toast;
         //Всплывающие сообщения
         void toastMessage(String cToast) {
         if (toast==null)
             toast=new PopUpToast(context);
             toast.setMessage(cToast);}
-        }
+
         void toastMessage() {
             toast.cancel();
         }
@@ -588,26 +594,29 @@ public class MP_BackgroundService
                     mPlayer.setDataSource(context, uri);
                     mPlayer.setOnPreparedListener(listener);
                     mPlayer.prepare();
+                    sendMyBroadcast(new Intent(MP_PREPARE));
                     break;
                 case MP_RADIO:
                     Log.i(LOG_TAG, "prepare Radio");
                     mPlayer.setDataSource(Data);
                     Log.i(LOG_TAG, "prepareAsync");
                     mPlayer.setOnPreparedListener(listener);
-                    if (conectionCheck()){
-                        Intent intent= new Intent(context,LoaderActivity.class);
-                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                    if (connectionCheck()){
+                        if (mCurPosition == 6) {
+                            Intent intent = new Intent(context, LoaderActivity.class);
+                            intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
                         mPlayer.prepareAsync();
-                    }
-                    broadcastIntent = new Intent(MP_PREPARE_RADIO);
-                    sendMyBroadcast(broadcastIntent);
+                        sendMyBroadcast(new Intent(MP_PREPARE_RADIO));
+                    }else nullSong();
                     break;
                 case MP_SD:
                     Data = DATA_SD + Data;
                     Log.i(LOG_TAG, "prepare SD" + File.pathSeparator + Data);
                     mPlayer.setDataSource(Data);
                     mPlayer.prepare();
+                    sendMyBroadcast(new Intent(MP_PREPARE));
                     break;
                 case MP_SD_U:
                     Log.i(LOG_TAG, "prepare SD_U" + File.pathSeparator + Data);
@@ -616,8 +625,7 @@ public class MP_BackgroundService
                         mPlayer.setOnPreparedListener(listener);
                     }
                     mPlayer.prepare();
-                    broadcastIntent = new Intent(MP_PREPARE);
-                    sendMyBroadcast(broadcastIntent);
+                    sendMyBroadcast(new Intent(MP_PREPARE));
                     break;
                 case MP_HTTP:
                     Log.i(LOG_TAG, "prepare HTTP");
@@ -627,11 +635,7 @@ public class MP_BackgroundService
                     mPlayer.prepareAsync();
                     break;
                 default:
-                    MPState = MP_EMPTY;
-                    trackInfo = null;
-                    updateWidgets();
-                    broadcastIntent = new Intent(MP_ERROR);
-                    sendMyBroadcast(broadcastIntent);
+                    nullSong();
                     break;
 
             }
@@ -644,6 +648,13 @@ public class MP_BackgroundService
         registerReceiver(mNoiseReceiver, nF);
         setVolume();
         setLoop();
+    }
+
+    void nullSong(){
+        MPState = MP_EMPTY;
+        trackInfo = null;
+        updateWidgets();
+        sendMyBroadcast(new Intent(MP_ERROR));
     }
 
     @Override
@@ -660,7 +671,7 @@ public class MP_BackgroundService
     /**
      * The appplication-wide instance of the PlaybackService.
      */
-    public static MP_BackgroundService sInstance;
+    public static MP_BG_Service sInstance;
     public static boolean hasInstance() {
         return sInstance != null;
     }
@@ -690,10 +701,10 @@ public class MP_BackgroundService
         SmallWidget.updateAppWidget(this, manager, SongTitle, MPState);
     }
 
-    public static MP_BackgroundService get(Context context) {
+    public static MP_BG_Service get(Context context) {
 
         if (sInstance == null) {
-            context.startService(new Intent(context, MP_BackgroundService.class));
+            context.startService(new Intent(context, MP_BG_Service.class));
 
             while (sInstance == null) {
                 try {
@@ -726,8 +737,8 @@ public class MP_BackgroundService
     }
 
     public int getState() {
-        int state=0;
-        if (mPlayer.isPlaying())state=1;
+        int state=MP_PAUSE;
+        if (mPlayer.isPlaying())state=MP_PLAY;
         return state;
     }
 

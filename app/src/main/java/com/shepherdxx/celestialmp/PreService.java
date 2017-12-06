@@ -31,7 +31,7 @@ public class PreService extends Activity {
         }
 
         public static Intent startBGService(Context context, int id, int pos) {
-            Intent intent = controlBGService(context,MP_BackgroundService.ACTION_PLAY);
+            Intent intent = controlBGService(context, MP_BG_Service.ACTION_PLAY);
             Bundle b = new Bundle();
             b.putInt("Playlist", id);
             b.putInt("MPData", pos);
@@ -43,7 +43,7 @@ public class PreService extends Activity {
         }
 
         public static Intent controlBGService(Context context, String action) {
-            Intent intent = new Intent(context, MP_BackgroundService.class);
+            Intent intent = new Intent(context, MP_BG_Service.class);
             intent.setAction(action);
             return intent;
         }
@@ -53,33 +53,29 @@ public class PreService extends Activity {
             super.onCreate(savedInstanceState);
 
             final String action = getIntent().getAction();
-            final int id        = getIntent().getIntExtra("Playlist",Constants.PLAYLIST_All_Audio);
-            final int pos       = getIntent().getIntExtra("MPData",0);
-            Intent intent= new Intent(this, MP_BackgroundService.class);
             if (action != null)
                 switch (action) {
-                    case MP_BackgroundService.ACTION_PLAY:
-                        intent = new Intent(this, B_MainScreen.class);
-                        if (MP_BackgroundService.hasInstance()) {
+                    case MP_BG_Service.ACTION_PLAY:
+                        Intent  intent = new Intent(this, B_MainScreen.class);
+                        if (MP_BG_Service.hasInstance()) {
                                 intent.setAction(ACTION_RESUME);
                         } else  intent.setAction(ACTION_START);
                         Log.i("PreService#1", intent.getAction());
                         startActivity(intent);
                         break;
-                    case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK:
-                    case MP_BackgroundService.ACTION_NEXT_SONG:
-                    case MP_BackgroundService.ACTION_PREV_SONG:
-                        intent.setAction(action);
-                        startService(intent);
+                    case MP_BG_Service.ACTION_TOGGLE_PLAYBACK:
+                    case MP_BG_Service.ACTION_NEXT_SONG:
+                    case MP_BG_Service.ACTION_PREV_SONG:
+                        startService(controlBGService(this, action));
                         break;
-//                case MP_BackgroundService.ACTION_PAUSE:
-//                case MP_BackgroundService.ACTION_TOGGLE_PLAYBACK_DELAYED:
-//                case MP_BackgroundService.ACTION_RANDOM_MIX_AUTOPLAY:
-//                case MP_BackgroundService.ACTION_NEXT_SONG_DELAYED:
-//                case MP_BackgroundService.ACTION_NEXT_SONG_AUTOPLAY:
-//                case MP_BackgroundService.ACTION_PREVIOUS_SONG_AUTOPLAY:
-//                case MP_BackgroundService.ACTION_CYCLE_SHUFFLE:
-//                case MP_BackgroundService.ACTION_CYCLE_REPEAT:
+//                case MP_BG_Service.ACTION_PAUSE:
+//                case MP_BG_Service.ACTION_TOGGLE_PLAYBACK_DELAYED:
+//                case MP_BG_Service.ACTION_RANDOM_MIX_AUTOPLAY:
+//                case MP_BG_Service.ACTION_NEXT_SONG_DELAYED:
+//                case MP_BG_Service.ACTION_NEXT_SONG_AUTOPLAY:
+//                case MP_BG_Service.ACTION_PREVIOUS_SONG_AUTOPLAY:
+//                case MP_BG_Service.ACTION_CYCLE_SHUFFLE:
+//                case MP_BG_Service.ACTION_CYCLE_REPEAT:
                     default:
                         throw new IllegalArgumentException("No such action: " + action);
                 }

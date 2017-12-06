@@ -73,7 +73,7 @@ public final class Constants {
             PLAYLIST_URI = MediaStore
                     .Audio
                     .Playlists
-                    .getContentUri("external");
+                    .EXTERNAL_CONTENT_URI;
 
 
     public static String BUNDLE = "Bundle";

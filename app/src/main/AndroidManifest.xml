@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name=".MP_BackgroundService"
+            android:name=".MP_BG_Service"
             android:parentActivityName=".B_MainScreen" />
 
         <receiver android:name=".SmallWidget">
@@ -57,8 +57,23 @@
 
         <activity
             android:name=".PreService"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
-        <activity android:name=".LoaderActivity"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+
+        </activity>
+
+        <activity
+            android:name=".LoaderActivity">
+        </activity>
+
+        <activity
+            android:name=".extras.Debug">
+        </activity>
+
+        <receiver android:name="MediaButtonWidget" >
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageButton;
 
-import com.shepherdxx.celestialmp.MP_BackgroundService;
 import com.shepherdxx.celestialmp.extras.Constants;
 
 import java.io.IOException;
@@ -23,8 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.shepherdxx.celestialmp.extras.Constants.BUNDLE;
-import static com.shepherdxx.celestialmp.extras.Constants.MP_PLAY;
 import static com.shepherdxx.celestialmp.extras.Constants.URI_RADIO_BASE;
 import static com.shepherdxx.celestialmp.extras.Constants.URI_RADIO_AFTER_BASE;
 
@@ -155,59 +152,17 @@ public class RadioBD {
 //    input("Press enter to close")
 
 
-    private static final int RADIO_SEARCH_LOADER = 22;
-
-
-
     int index;
     private String mUri;
-//    AdapterMS mAdapter;
-    RecyclerView mRadioList;
-    LinearLayoutManager mLayoutManager;
-    int mCurCheckPosition = 5;
-    Context context;
     private Activity mActivity;
     private ArrayList<MyTrackInfo> rows=new ArrayList<>();
-    String ERROR = "Check your connection";
-    ImageButton btPlay, btNext, btBack;
-    String[] RadioPath;
-    String[] songTitle;
-    Toolbar tb;
     String[] adi = {"http://us3.internet-radio.com:8007/",
             "http://air2.radiorecord.ru:805/rock_320",
             "http://84.22.142.130:8000/arstream?4&28",
             "http://81.88.36.42:8010/"};
-    int MPType, MPState;
-    Intent intent;
-    Bundle Bondiana;
-    Handler myHandler = new Handler();
-
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.radio_player);
-//
-//        /* подключение лоадера
-//        *
-//        */
-//        getSupportLoaderManager().initLoader(RADIO_SEARCH_LOADER, null, this);
-//        /*
-//        */
-//        context = this;
-//
-//        RadioPlayListCreation();
-//        findView();
-//        mLayoutManager = new LinearLayoutManager(this);
-//        mRadioList.setLayoutManager(mLayoutManager);
-//        mAdapter = new AdapterMS(context, rows);
-//        mRadioList.setAdapter(mAdapter);
-//        mAdapter.setmOnViewClicklListener(this);
-//
 
     //создание плейлиста
     private void RadioPlayListCreation() {
-//        playListInfo = new PlayListInfo(PLAYLIST_RADIO,_PLAYLIST_RADIO);
-//        playListInfo.plType=MP_RADIO;
         if (rows.isEmpty()) {
             for (index = 1; index <= 5; index++) {
                 mUri = URI_RADIO_BASE + String.valueOf(index) + URI_RADIO_AFTER_BASE;
@@ -220,12 +175,9 @@ public class RadioBD {
                 );
             }
             addMoreTo(rows);
-//            playListInfo.audioTracks=rows;
             RadioList=rows;
             Log.i("Radio", "плейлист создан");
         } else Log.i("Radio", "плейлист уже есть");
-//        //Создание Листа путей
-//        CreatePathList();
     }
 
     private void addMoreTo(ArrayList<MyTrackInfo> PTI){
@@ -248,23 +200,6 @@ public class RadioBD {
         return song;
     }
 
-//    private void CreatePathList() {
-//        int st;
-//        RadioPath = new String[rows.size()];
-//        songTitle = new String[rows.size()];
-//        try {
-//            for (st = 0; st < rows.size(); st++) {
-//                RadioPath[st] = String.valueOf(rows.get(st).getmUri());
-//                songTitle[st] = rows.get(st).getmRadio();
-//                MyTrackInfo trackInfo = new MyTrackInfo(songTitle[st],String.valueOf(st),Uri.parse(RadioPath[st]));
-//                RadioList.add(trackInfo);
-//                System.out.println(RadioPath[st]);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     ArrayList<MyTrackInfo> RadioList= new ArrayList<>();
 
     public ArrayList<MyTrackInfo> RadioList(){
@@ -272,104 +207,4 @@ public class RadioBD {
         return RadioList;
     }
 
-//    String textInfo;
-//    void reqText(String key){
-//        textInfo =null;
-//        switch(key){
-//            case "http://air2.radiorecord.ru:805/rock_320" :
-//                String URI_S="http://www.radiorecord.ru/xml/rock_online_v8.txt";
-//                Uri uri = Uri.parse(URI_S);
-//                try {
-//                    URL radioSearch = new URL(URI_S);
-//                    String searchResults = getResponseFromHttpUrl(radioSearch);
-//                    textInfo=searchResults;
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            break;
-//        }
-//    }
-//
-//        @Override
-//        public Loader<String> onCreateLoader ( int id, final Bundle args){
-//            return new AsyncTaskLoader<String>(this) {
-//
-//                    // Override onStartLoading
-//                    @Override
-//                    protected void onStartLoading() {
-//                        // If args is null, return.
-//                /* If no arguments were passed, we don't have a query to perform. Simply return. */
-//                        if (args == null) {
-//                            Log.i("onStartLoading", "nope");
-//                            return;
-//                        }
-//                        Log.i("onStartLoading", "yep");
-////                // Show the loading indicator
-////                /*
-////                 * When we initially begin loading in the background, we want to display the
-////                 * loading indicator to the user
-////                 */
-////                mLoadingIndicator.setVisibility(View.VISIBLE);
-//
-//                        // COMPLETED (8) Force a load
-//                        forceLoad();
-//                    }
-//
-//                    // Override loadInBackground
-//                    @Override
-//                    public String loadInBackground() {
-//                        // Get the String for our URL from the bundle passed to onCreateLoader
-//                /* Extract the search query from the args using our constant */
-//                        String URI_Second_BASE = args.getString(SEARCH_QUERY_URL_EXTRA);
-//                        Log.i("loadInBackground", URI_Second_BASE);
-//                        // If the URL is null or empty, return null */
-//                        if (URI_Second_BASE == null
-//                                || TextUtils.isEmpty(URI_Second_BASE)) {
-//                            return null;
-//                        }
-//
-//                        // Copy the try / catch block from the AsyncTask's doInBackground method
-//                /* Parse the URL from the passed in String and perform the search */
-//                        try {
-//                            URL radioSearch = new URL(URI_Second_BASE);
-//                            String searchResults = RadioSearch.getResponseFromHttpUrl(radioSearch);
-//                            Log.i("searchResults", searchResults);
-//                            return searchResults;
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            Log.i("searchResults", "WTF");
-//                            return null;
-//                        }
-//                    }
-//            };
-//        }
-//
-//
-//
-//        private void startSearch () {
-//            URL vkSearchUrl = RadioSearch.buildUrl("");
-//
-//            // COMPLETED (19) Create a bundle called queryBundle
-//            Bundle queryBundle = new Bundle();
-//            // COMPLETED (20) Use putString with SEARCH_QUERY_URL_EXTRA as the key and the String value of the URL as the value
-//            queryBundle.putString(SEARCH_QUERY_URL_EXTRA, vkSearchUrl.toString());
-//
-//            LoaderManager loaderManager = getSupportLoaderManager();
-//            // COMPLETED (22) Get our Loader by calling getLoader and passing the ID we specified
-//            Loader<String> SearchLoader = loaderManager.getLoader(RADIO_SEARCH_LOADER);
-//            // COMPLETED (23) If the Loader was null, initialize it. Else, restart it.
-//            if (SearchLoader == null) {
-//                loaderManager.initLoader(RADIO_SEARCH_LOADER, queryBundle, this);
-//            } else {
-//                loaderManager.restartLoader(RADIO_SEARCH_LOADER, queryBundle, this);
-//            }
-//            Log.i("startSearch", vkSearchUrl.toString());
-//        }
-//        private void find_more_station () {
-//            Log.i("find_more_station", "whenever");
-//            //        int count = 0;
-//        }
-//        }
 }

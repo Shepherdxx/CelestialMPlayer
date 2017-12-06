@@ -108,6 +108,7 @@ public class B_MainScreen extends AppCompatActivity
         setDrawerLayout();
 
         String action = getIntent().getAction();
+        if (action!=null)
             switch (action){
                 case ACTION_RESUME:
                     int id=R.id.player_activity;
@@ -302,11 +303,11 @@ public class B_MainScreen extends AppCompatActivity
     }
 
 
-//        MP_BackgroundService serviceOn=null;
+//        MP_BG_Service serviceOn=null;
     private MyTrackInfo curTrackInfo() {
         MyTrackInfo track = null;
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(this);
+        if (MP_BG_Service.hasInstance()) {
+            MP_BG_Service service = MP_BG_Service.get(this);
             track = service.getTrackInfo();
 //            serviceOn = service;
         }

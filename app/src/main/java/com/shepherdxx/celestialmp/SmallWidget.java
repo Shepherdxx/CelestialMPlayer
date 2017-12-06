@@ -26,8 +26,8 @@ public class SmallWidget extends AppWidgetProvider {
         String songName= context.getResources().getString(R.string.appwidget_text);
         int state = Constants.MP_EMPTY;
 
-        if (MP_BackgroundService.hasInstance()) {
-            MP_BackgroundService service = MP_BackgroundService.get(context);
+        if (MP_BG_Service.hasInstance()) {
+            MP_BG_Service service = MP_BG_Service.get(context);
             state = service.MPState;
             songName = service.SongTitle;
             Log.i("SmallWidget", songName + " " + state);
@@ -73,19 +73,19 @@ public class SmallWidget extends AppWidgetProvider {
         Intent intent;
         PendingIntent pendingIntent;
 
-        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_TOGGLE_PLAYBACK);
+        intent = PreService.getIntent(context, MP_BG_Service.ACTION_TOGGLE_PLAYBACK);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_pausePlay, pendingIntent);
 
-        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_NEXT_SONG);
+        intent = PreService.getIntent(context, MP_BG_Service.ACTION_NEXT_SONG);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_next_song, pendingIntent);
 
-        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PREV_SONG);
+        intent = PreService.getIntent(context, MP_BG_Service.ACTION_PREV_SONG);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_back_song, pendingIntent);
 
-        intent = PreService.getIntent(context,MP_BackgroundService.ACTION_PLAY);
+        intent = PreService.getIntent(context, MP_BG_Service.ACTION_PLAY);
         pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.sw_text, pendingIntent);
 

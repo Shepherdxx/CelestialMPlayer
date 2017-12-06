@@ -1,10 +1,5 @@
 package com.shepherdxx.celestialmp;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -18,7 +13,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.shepherdxx.celestialmp.MP_MediaPlayer.LOG_TAG;
 import static com.shepherdxx.celestialmp.plailist.RadioBD.SEARCH_QUERY_URL_EXTRA;
 import static com.shepherdxx.celestialmp.plailist.RadioBD.getResponseFromHttpUrl;
 
@@ -141,7 +135,7 @@ public class LoaderActivity
         Log.i(LOG_TAG,message);
         return textInfo;
     }
-
+    String LOG_TAG= LoaderActivity.class.getSimpleName();
     private void startSearch(String key){
         URL vkSearchUrl = buildUrl(key);
 
