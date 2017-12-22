@@ -2,10 +2,16 @@ package com.shepherdxx.celestialmp.plailist;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.shepherdxx.celestialmp.extras.Constants;
 import com.shepherdxx.celestialmp.extras.PopUpToast;
@@ -13,6 +19,7 @@ import com.shepherdxx.celestialmp.extras.PopUpToast;
 import java.io.File;
 import java.util.ArrayList;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.shepherdxx.celestialmp.extras.Constants.MyCachePath;
 
 /**
@@ -27,6 +34,8 @@ public class PlayListTrue {
     public PlayListTrue(){}
     public PlayListTrue(Context context)    {mContext = context;}
 
+    SharedPreferences sharedPreferences;
+    boolean b;
 
     public PlayListInfo createPlaylist(int id){
         PlayListInfo current;
@@ -67,6 +76,9 @@ public class PlayListTrue {
     private ArrayList<MyTrackInfo> plCreate(int id,ArrayList<Long> audioIds) {
         ArrayList<MyTrackInfo> cur;
         Log.i("plCreate", "плейлист подготовка");
+        sharedPreferences=getDefaultSharedPreferences(mContext);
+        b= sharedPreferences.getBoolean("req_perm", false);
+        if (b){
         switch (id) {
             case Constants.PLAYLIST_RADIO:
                 cur = new RadioBD().RadioList();
@@ -79,7 +91,9 @@ public class PlayListTrue {
                 break;
         }
         if (cur!=null)Log.i("PlayListTrue create", " " + cur.size());
-        return cur;
+        return cur;}
+        Log.i("PlayListTrue create", "need to get Permission");
+        return null;
     }
 
     private MyTrackInfo cursorTrack(Cursor cursor,int playlistId){
@@ -139,21 +153,28 @@ public class PlayListTrue {
 
     private ArrayList<Long> getAudioID(int playlistId) {
         ArrayList<Long> ids = new ArrayList<>();
-        QueryTask queryTask = QueryTask.queryTask();
-        Cursor cursor = queryTask.playlistSummary(mContext, playlistId);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            for(int r= 0; r<cursor.getCount(); r++, cursor.moveToNext()){
-                long id=cursor.getLong(0);
-                Log.i("getAudioID", "playlistID" + File.pathSeparator + id);
-                id=cursor.getLong(2);
-                Log.i("getAudioID", "macroPListId" + File.pathSeparator + id);
-                ids.add(id);
-                id=cursor.getLong(3);
-                Log.i("getAudioID", "macroPListId" + File.pathSeparator + id);
-            }cursor.close();
+        try {
+            QueryTask queryTask = QueryTask.queryTask();
+            Cursor cursor = queryTask.playlistSummary(mContext, playlistId);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                for (int r = 0; r < cursor.getCount(); r++, cursor.moveToNext()) {
+                    long id = cursor.getLong(0);
+                    Log.i("getAudioID", "playlistID" + File.pathSeparator + id);
+                    id = cursor.getLong(2);
+                    Log.i("getAudioID", "macroPListId" + File.pathSeparator + id);
+                    ids.add(id);
+                    id = cursor.getLong(3);
+                    Log.i("getAudioID", "macroPListId" + File.pathSeparator + id);
+                }
+                cursor.close();
+            }
+            return ids;
+        } catch (Exception e) {
+            e.printStackTrace();
+            new PopUpToast(mContext).setMessage("Поймали ошибку");
+            return ids;
         }
-        return ids;
     }
 
     private PlayListInfo getPlayListInfo(int playlistId) {

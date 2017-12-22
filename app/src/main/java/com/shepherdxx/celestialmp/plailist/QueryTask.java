@@ -72,14 +72,16 @@ public class QueryTask {
     }
 
     private Uri SD_check(){
-       return MediaStore.Audio.Media.
-               getContentUriForPath(Environment.getExternalStorageDirectory().getPath());
-//        if (Environment.getExternalStorageDirectory().exists())
-//            return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        return  MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
+//       return MediaStore.Audio.Media.
+//               getContentUriForPath(Environment.getExternalStorageDirectory().getPath());
+        if (Environment.getExternalStorageDirectory().exists())
+            return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        return  MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
     }
 
     private Uri pl_check(){
+//        return MediaStore.Audio.Playlists.getContentUri(Environment.getExternalStorageDirectory().getPath());
+//                .getContentUriForPath(Environment.getExternalStorageDirectory().getPath());
         if (Environment.getExternalStorageDirectory().exists())
             return MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
         return  MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI;

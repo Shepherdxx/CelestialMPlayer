@@ -24,17 +24,26 @@ public class Debug extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debug_view);
-        String finalString =cusorText_1()+"\n"+check()+"\n"
-                + cusorText_2()+"\n"+cusorText_3()
-                +"\n"+cusorText_4()+"\n"+cusorText_5();
+        String finalString = check()+"\n"+check2();
+//                cusorText_1()+"\n"+check()+"\n"
+//                + cusorText_2()+"\n"+cusorText_3()
+//                +"\n"+cusorText_4()+"\n"+cusorText_5();
         textSet(finalString);
     }
 
+
     String check() {
-        if (Environment.getExternalStorageState() == null)
-            return "getExternalStorageState == null";
-            return Environment.getDownloadCacheDirectory().toString();
+        return Environment.getExternalStorageState();
     }
+
+    String check2() {
+        return String.valueOf(Environment.isExternalStorageEmulated());
+    }
+//    String check() {
+//        if (Environment.getExternalStorageState() == null)
+//            return "getExternalStorageState == null";
+//            return Environment.getDownloadCacheDirectory().toString();
+//    }
 
     void textSet(String data){
         TextView textView=findViewById(R.id.debug_tv);

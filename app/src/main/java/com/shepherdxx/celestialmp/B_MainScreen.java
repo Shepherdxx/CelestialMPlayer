@@ -1,12 +1,14 @@
 package com.shepherdxx.celestialmp;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -37,8 +39,8 @@ import com.shepherdxx.celestialmp.settings.SettingsActivity;
 
 import java.util.ArrayList;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.shepherdxx.celestialmp.A_WelcomeScreen.ACTION_RESUME;
-import static com.shepherdxx.celestialmp.extras.Constants.iERROR;
 
 public class B_MainScreen extends AppCompatActivity
         implements
@@ -87,11 +89,16 @@ public class B_MainScreen extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_b_main_screen);
+        sharedPreferences = getDefaultSharedPreferences(this);
+        boolean b = sharedPreferences.getBoolean("req_perm", false);
+        if (!b) CheckPermission();
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toast=new PopUpToast(getBaseContext());
+                toast = new PopUpToast(getBaseContext());
                 toast.setMessage(getBaseContext().getResources().getString(R.string.develop));
             }
         });
@@ -108,14 +115,14 @@ public class B_MainScreen extends AppCompatActivity
         setDrawerLayout();
 
         String action = getIntent().getAction();
-        if (action!=null)
-            switch (action){
+        if (action != null)
+            switch (action) {
                 case ACTION_RESUME:
-                    int id=R.id.player_activity;
-                    if (curTrackInfo()== null)id=R.id.player_playlist;
+                    int id = R.id.player_activity;
+                    if (curTrackInfo() == null) id = R.id.player_playlist;
                     if (curTrackInfo() != null &&
-                            curTrackInfo().getPlaylistId()==Constants.PLAYLIST_RADIO)
-                        id=R.id.radio_activity;
+                            curTrackInfo().getPlaylistId() == Constants.PLAYLIST_RADIO)
+                        id = R.id.radio_activity;
                     checkedFragment(id);
                     navViewCheckedItem();
                     break;
@@ -125,7 +132,6 @@ public class B_MainScreen extends AppCompatActivity
                     break;
             }
     }
-
 
 
     private int FragmentId() {
@@ -159,10 +165,11 @@ public class B_MainScreen extends AppCompatActivity
             case R.id.player_activity:
                 if (curTrackInfo() != null) {
                     playlist_id = curTrackInfo().getPlaylistId();
-                    if (playlist_id == Constants.PLAYLIST_RADIO)  playlist_id = Constants.PLAYLIST_All_Audio;
+                    if (playlist_id == Constants.PLAYLIST_RADIO)
+                        playlist_id = Constants.PLAYLIST_All_Audio;
                     exchangeFragment =
-                            Fragment_Playlist.newInstance(1, playlist_id);}
-                else exchangeFragment = Fragment_Playlist.newInstance(2);
+                            Fragment_Playlist.newInstance(1, playlist_id);
+                } else exchangeFragment = Fragment_Playlist.newInstance(2);
                 replacer(exchangeFragment);
                 break;
             case R.id.radio_activity:
@@ -303,7 +310,7 @@ public class B_MainScreen extends AppCompatActivity
     }
 
 
-//        MP_BG_Service serviceOn=null;
+    //        MP_BG_Service serviceOn=null;
     private MyTrackInfo curTrackInfo() {
         MyTrackInfo track = null;
         if (MP_BG_Service.hasInstance()) {
@@ -315,10 +322,10 @@ public class B_MainScreen extends AppCompatActivity
     }
 
     private String currentTrack() {
-        if (curTrackInfo()!=null) {
-            AlbumName = (curTrackInfo().getAlbum() == null) ? ""    : curTrackInfo().getAlbum();
-            ArtistName = (curTrackInfo().getArtist() == null) ? ""  : curTrackInfo().getArtist();
-            SongName = (curTrackInfo().getTitle() == null) ? ""     : curTrackInfo().getTitle();
+        if (curTrackInfo() != null) {
+            AlbumName = (curTrackInfo().getAlbum() == null) ? "" : curTrackInfo().getAlbum();
+            ArtistName = (curTrackInfo().getArtist() == null) ? "" : curTrackInfo().getArtist();
+            SongName = (curTrackInfo().getTitle() == null) ? "" : curTrackInfo().getTitle();
         }
         if (AlbumName.equals("") || ArtistName.equals("") || SongName.equals("")) {
             return (SongName + " " + AlbumName + " " + ArtistName);
@@ -338,21 +345,6 @@ public class B_MainScreen extends AppCompatActivity
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
-    }
-
-
-
-    private Boolean checkConnection() {
-        boolean isConnected = false;
-        ConnectivityManager cm = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        try {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork.isConnectedOrConnecting();
-        } catch (NullPointerException e) {
-            Toast.makeText(this, iERROR, Toast.LENGTH_SHORT).show();
-        }
-        Log.i("B_main_screen", "checkConnection " + isConnected);
-        return isConnected;
     }
 
     String onStartStr = "onStart";
@@ -375,8 +367,6 @@ public class B_MainScreen extends AppCompatActivity
     }
 
 
-
-
     @Override
     public void onPlaylistClick(PlayListInfo info) {
 
@@ -384,19 +374,66 @@ public class B_MainScreen extends AppCompatActivity
 
     @Override
     public void onTrackClick(MyTrackInfo item, int position) {
-            toolbar.setTitle(item.getmRadio());
-            int id = item.getPlaylistId();
-            startService(
-                    PreService.startBGService(this,
-                            id,
-                            position)
-            );
-        }
+        toolbar.setTitle(item.getmRadio());
+        int id = item.getPlaylistId();
+        startService(
+                PreService.startBGService(this,
+                        id,
+                        position)
+        );
+    }
 
-    PopUpToast toast=null;
+    PopUpToast toast = null;
+
     @Override
     public void onTrackClick(MyTrackInfo.DummyItem item) {
-        toast=new PopUpToast(getBaseContext());
-        toast.setMessage("You click " + item.toString() );
+        toast = new PopUpToast(getBaseContext());
+        toast.setMessage("You click " + item.toString());
     }
+
+    private void CheckPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 123);
+            } else {
+                PERMISSION_GRANTED = false;
+                new PopUpToast(getBaseContext()).setMessage("В доступе отказано прям ппц");
+                sharedPreferences.edit()
+                        .putBoolean("req_perm", PERMISSION_GRANTED)
+                        .apply();
+            }
+        } else {
+            PERMISSION_GRANTED = true;
+            sharedPreferences.edit()
+                    .putBoolean("req_perm", PERMISSION_GRANTED)
+                    .apply();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 123:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PERMISSION_GRANTED = true;
+                    sharedPreferences.edit()
+                            .putBoolean("req_perm", PERMISSION_GRANTED)
+                            .apply();
+                } else {
+                    Toast.makeText(getBaseContext(), "В доступе отказано", Toast.LENGTH_SHORT).show();
+                    CheckPermission();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
+    }
+
+    boolean PERMISSION_GRANTED;
+
+    SharedPreferences sharedPreferences;
+
+
 }
